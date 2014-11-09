@@ -14,8 +14,8 @@
             cycle: true,                        // 是否循环播放
             pointBoxClass: '',               //点的容器样式，如果为空不生成'点'列表
             event: "mouseenter",            //点的事件类型
-            btnBack: '#sildeBox .left_btn',
-            btnNext: '#slideBox .right_btn',
+            btnBack: '#sildeBox .left_btn', //后退按钮
+            btnNext: '#slideBox .right_btn', //前进按钮
             type: 'slide',
             speed: '3000',
             hoverStop: true,
