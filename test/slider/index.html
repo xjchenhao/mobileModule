@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>焦点图模块Demo</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        .clearfix:after { display: block; content: ""; clear: both; height: 0 }
+        .clearfix { *zoom: 1 }
+        .slide_con { position: relative; width: 500px; height: 280px; overflow: hidden; font-size: 0; line-height: 0 }
+        .slide_con ul { -webkit-transition: all .5s ease-in-out 1s;transition: all .5s ease-in-out 1s; }
+        .slide_con li { float: left; }
+        .slide_con li a { display: block; }
+        .slide_con li img { width: 500px; height: 280px; }
+        .slide_con .btn { font-size: 0; line-height: 0; overflow: hidden; text-indent: -9999px; position: absolute; top: 50%; width: 40px; height: 40px; margin-top: -20px; border-radius: 5px; background: #000 no-repeat center center; opacity: .5; filter: alpha(opacity=50); }
+        .slide_con .left_btn { left: 20px; background-image: url(image/slide_leftbtn.png); }
+        .slide_con .right_btn { right: 20px; background-image: url(image/slide_rightbtn.png); }
+        .slide_con .btn:hover { background-color: #ea544a; opacity: 1; filter: alpha(opacity=100); }
+    </style>
+</head>
+<body>
+<div class="slide_con" id="sildeBox">
+    <ul class="clearfix">
+        <li><a href="#"><img src="image/1.jpg" alt="图片1" /></a></li>
+        <li><a href="#"><img src="image/2.jpg" alt="图片2" /></a></li>
+        <!--<li><a href="#"><img src="image/3.jpg" alt="图片3" /></a></li>-->
+        <!--<li><a href="#"><img src="image/4.jpg" alt="图片4" /></a></li>-->
+        <!--<li><a href="#"><img src="image/5.jpg" alt="图片5" /></a></li>-->
+    </ul>
+    <a class="btn left_btn" href="javascritp:;" title="上一张">后退</a>
+    <a class="btn right_btn" href="javascritp:;" title="下一张">前进</a>
+</div>
+<script src="../src/sea.js"></script>
+<script>
+    seajs.use("module/slider.js", function (Slider) {
+        var slide = new Slider({
+            slideBox: '#sildeBox',             //焦点图容器
+            imgChild: '#sildeBox li',        //焦点图列表
+            pointBoxClass: '',               //点的容器样式，如果为空不生成'点'列表
+            cycle: true,                     // 是否循环播放
+            event: "mouseenter",
+            btnLeft: '#sildeBox .left_btn',
+            btnRight: '#slideBox .right_btn',
+            animation: 'slide',
+            speed: '2000',
+            hoverStop: true,
+            callback: ''
+        });
+    });
+</script>
+</body>
+</html>
