@@ -2,6 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"/>
     <title>焦点图模块Demo</title>
     <style>
         * { margin: 0; padding: 0; }
@@ -16,6 +17,9 @@
         .slide_con .left_btn { left: 20px; background-image: url(image/leftbtn.png); }
         .slide_con .right_btn { right: 20px; background-image: url(image/rightbtn.png); }
         .slide_con .btn:hover { background-color: #ea544a; opacity: 1; filter: alpha(opacity=100); }
+        .slide_con .dian_con{ position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; text-align: center; vertical-align: middle;}
+        .slide_con .dian_con a{ display: inline-block; width: 10px; height: 10px;background-color:#000;border-radius:100%;margin:0 3px;}
+        .slide_con .dian_con .on{background-color:red}
     </style>
 </head>
 <body>
@@ -27,25 +31,25 @@
         <li><a href="#"><img src="image/img4.jpg" alt="图片4" /></a></li>
         <li><a href="#"><img src="image/img5.jpg" alt="图片5" /></a></li>
     </ul>
-    <a class="btn left_btn" href="javascritp:;" title="上一张">后退</a>
-    <a class="btn right_btn" href="javascritp:;" title="下一张">前进</a>
+    <a class="btn left_btn" href="javascript:" title="上一张">后退</a>
+    <a class="btn right_btn" href="javascript:" title="下一张">前进</a>
 </div>
-<script src="../src/sea.js"></script>
+<script src="../../src/sea.js"></script>
 <script>
     seajs.use("module/slider.js", function (Slider) {
         var slide = new Slider({
-            slideBox: '#slideBox',             //焦点图容器
-            imgChild: '#slideBox li',        //焦点图列表
-            pointBoxClass: '',               //点的容器样式，如果为空不生成'点'列表
-            cycle: true,                     // 是否循环播放
-            event: "mouseenter",
-            btnBack: '#slideBox .left_btn',
-            btnNext: '#slideBox .right_btn',
-            animation: 'slide',
-            speed: '3000',
-            hoverStop: true,
-            callback: ''
+            slideBox: '#slideBox',              //焦点图容器
+            imgChild: '#slideBox li',           //焦点图列表
+            cycle: true,                       //是否循环播放
+            pointBoxClass: 'dian_con',          //点的容器样式，如果为空不生成'点'列表
+            touch: true,                       //触摸事件
+            btnBack: '#slideBox .left_btn',     //后退按钮
+            btnNext: '#slideBox .right_btn',    //前进按钮
+            speed: '3000',                      //动画间隔
+            callback:''                         //转场时触发的回调函数
         });
+//        slide.destroy();
+//        slide=null;
     });
 </script>
 </body>

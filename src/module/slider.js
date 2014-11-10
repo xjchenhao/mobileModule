@@ -6,95 +6,161 @@
     } else {
         root.Slider = factory(root, {});
     }
-})(this, function (root, Slider) {
+})(this, function (root, slider) {
     var Slider = function (val) {
         var o = {
-            slideBox: '#sildeBox',              //焦点图容器
-            imgChild: '#sildeBox li',           //焦点图列表
-            cycle: true,                        // 是否循环播放
-            pointBoxClass: '',               //点的容器样式，如果为空不生成'点'列表
-            event: "mouseenter",            //点的事件类型
-            btnBack: '#sildeBox .left_btn', //后退按钮
-            btnNext: '#slideBox .right_btn', //前进按钮
-            type: 'slide',
-            speed: '3000',
-            hoverStop: true,
-            callback: ''
+            slideBox: '#slideBox',              //焦点图容器
+            imgChild: '#slideBox li',           //焦点图列表
+            cycle: true,                       //是否循环播放
+            pointBoxClass: '',                  //点的容器样式，如果为空不生成'点'列表
+            touch: true,                       //触摸事件
+            btnBack: '#slideBox .left_btn',     //后退按钮
+            btnNext: '#slideBox .right_btn',    //前进按钮
+            speed: '3000',                      //动画间隔
+            callback: ''                        //转场时触发的回调函数
         };
-        var _self = this,           //对象指针
-            showIndex = 0,          //显示编号
-            distances = 0,          //slide模式下滚动的距离，即元素的宽度
-            imgLength = 0,           //元素个数
-            imgBox = {},            //图片列表点父级，通常是ul
-            cleanAuto = 0,            //自动播放的计时器变量
-            transitionVal = '';     //暂存transition属性
+        var _self = this;           //对象指针
+        var slide = {
+            distances: 0,                           //滚动的距离，即元素的宽度
+            imgLength: 0,                           //轮播图元素个数
+            cleanAuto: 0,                           //自动播放的计时器变量
+            transitionVal: '',                      //暂存transition属性
+            animationInit: '',                      //动画函数
+            eventNext: '',                          //前进事件函数
+            eventBack: '',                          //后退事件函数
+            eventTouch: {start: '', end: ''}        //触摸事件
+        };
+        var elm = {
+            slideBox: {},
+            imgBox: {},
+            imgChild: {},
+            btnBack: {},
+            btnNext: {},
+            pointBox: {},
+            pointHtml: '',
+            pointList: {}
+        };
+        this.index = 0;
         this._init = function () {
             for (var objVal in val) {
                 o[objVal] = val[objVal];
             }
-            var slideBox = document.querySelector(o.slideBox),
-                imgChild = document.querySelectorAll(o.imgChild),
-                btnBack = document.querySelector(o.btnBack),
-                btnNext = document.querySelector(o.btnNext);
-            if (o.type === 'slide') {
-                imgBox = imgChild[0].parentElement;
-                imgLength = imgChild.length;
-                distances = imgChild[0].clientWidth;
-                transitionVal = window.getComputedStyle(imgBox, null)['transition'];
-                imgBox.style.width = o.cycle ? (imgLength + 1) * distances + 'px' : imgLength * distances + 'px';
-                o.cycle && function () {
-                    var elm = imgChild[0].cloneNode(true);
-                    imgBox.appendChild(elm);
-                }();
-                if (o.speed) {
-                    var animationInit = function () {
-                        clearInterval(cleanAuto);
-                        cleanAuto = setInterval(function () {
-                            _self.transition(showIndex);
-                        }, o.speed);
+            elm.slideBox = document.querySelector(o.slideBox);
+            elm.imgChild = document.querySelectorAll(o.imgChild);
+            elm.btnBack = document.querySelector(o.btnBack);
+            elm.btnNext = document.querySelector(o.btnNext);
+            elm.imgBox = elm.imgChild[0].parentElement;
+            slide.imgLength = o.cycle ? elm.imgChild.length + 1 : elm.imgChild.length;
+            slide.distances = elm.imgChild[0].clientWidth;
+            slide.transitionVal = window.getComputedStyle(elm.imgBox, null)['transition'];
+            elm.imgBox.style.width = slide.imgLength * slide.distances + 'px';
+            o.cycle && function () {
+                elm.imgBox.appendChild(elm.imgChild[0].cloneNode(true));
+            }();
+            if (o.speed) {
+                slide.animationInit = function () {
+                    clearInterval(slide.cleanAuto);
+                    this.timer = function () {
+                        _self.transition(_self.index);
                     };
-                    animationInit();
+                    slide.cleanAuto = setInterval(this.timer, o.speed);
+                };
+                slide.animationInit();
+            }
+            if (o.pointBoxClass) {
+                elm.pointBox = document.createElement("div");
+                elm.pointBox.setAttribute('class', o.pointBoxClass);
+                for (var i = 0, l = elm.imgChild.length; i < l; i++) {
+                    if (i !== 0) {
+                        elm.pointHtml += '<a href="javascript:;">' + i + '</a>';
+                    } else {
+                        elm.pointHtml += '<a class="on" href="javascript:;">' + i + '</a>';
+                    }
                 }
-                btnBack && btnBack.addEventListener('click', function () {
-                    _self.transition(showIndex, 'back');
-                    o.speed && animationInit();
-                }, false);
-                btnNext && btnNext.addEventListener('click', function () {
-                    _self.transition(showIndex, 'next');
-                    o.speed && animationInit();
-                }, false);
+                elm.slideBox.appendChild(elm.pointBox);
+                elm.pointList = elm.pointBox.getElementsByTagName('a');
+                elm.pointBox.innerHTML = elm.pointHtml;
+            }
+            o.touch && _self.touch();
+            if (elm.btnBack) {
+                slide.eventBack = function () {
+                    _self.transition(_self.index, 'back');
+                };
+                elm.btnBack.addEventListener('touchend', slide.eventBack, false);
+            }
+            if (elm.btnNext) {
+                slide.eventNext = function () {
+                    _self.transition(_self.index, 'next');
+                };
+                elm.btnNext.addEventListener('touchend', slide.eventNext, false);
             }
         };
         this.transition = function (index, direction) {
-            showIndex = index;
+            _self.index = index;
+            o.speed && slide.animationInit();
             if (direction === undefined || direction === 'next') {
-                showIndex++;
+                _self.index++;
             } else if (direction === 'back') {
-                showIndex--;
+                _self.index--;
             }
-            if (o.type === 'slide') {
-                if (showIndex == imgLength + 1 || showIndex < 0) {
-                    if (direction === undefined || direction === 'next') {
-                        showIndex = 0;
-                    } else if (direction === 'back') {
-                        showIndex = imgLength;
-                    }
-                    ['-webkit-transition', 'transition'].forEach(function (attr) {
-                        imgBox.style[attr] = 'inherit';
-                    });
-                    ['-webkit-transform', 'transform'].forEach(function (attr) {
-                        imgBox.style[attr] = 'translate(0,0)';
-                    });
-                    setTimeout(function () {
-                        ['-webkit-transition', 'transition'].forEach(function (attr) {
-                            imgBox.style[attr] = transitionVal;
-                        });
-                    }, 0);
+            if (_self.index >= slide.imgLength || _self.index < 0) {
+                if (direction === undefined || direction === 'next') {
+                    _self.index = o.cycle ? '0' : --_self.index;
+                } else if (direction === 'back') {
+                    _self.index = o.cycle ? slide.imgLength - 1 : ++_self.index;
                 }
-                ['-webkit-transform', 'transform'].forEach(function (attr) {
-                    imgBox.style[attr] = 'translate(' + -showIndex * distances + 'px,0)';
+                ['-webkit-transition', 'transition'].forEach(function (attr) {
+                    elm.imgBox.style[attr] = 'inherit';
                 });
+                ['-webkit-transform', 'transform'].forEach(function (attr) {
+                    elm.imgBox.style[attr] = 'translate(0,0)';
+                });
+                setTimeout(function () {
+                    ['-webkit-transition', 'transition'].forEach(function (attr) {
+                        elm.imgBox.style[attr] = slide.transitionVal;
+                    });
+                }, 0);
             }
+            _self.point(_self.index);
+            ['-webkit-transform', 'transform'].forEach(function (attr) {
+                elm.imgBox.style[attr] = 'translate(' + -_self.index * slide.distances + 'px,0)';
+            });
+            o.callback && o.callback(_self);
+        };
+        this.point = function (index) {
+            for (var i = 0, l = elm.imgChild.length; i < l; i++) {
+                if (i == index) {
+                    elm.pointList[i].setAttribute('class', 'on');
+                } else {
+                    elm.pointList[i].setAttribute('class', '');
+                }
+            }
+        };
+        this.touch = function () {
+            var _this = this;
+            this.startX = 0;
+            this.endX = 0;
+            slide.eventTouch.start = function () {
+                _this.startX = event.changedTouches[0].clientX;
+            };
+            slide.eventTouch.end = function () {
+                _this.endX = event.changedTouches[0].clientX;
+                if (_this.endX - _this.startX > slide.distances / 4) {
+                    _self.transition(_self.index, 'back');
+                } else if (_this.endX - _this.startX < -slide.distances / 4) {
+                    _self.transition(_self.index, 'next');
+                }
+            };
+            elm.slideBox.addEventListener('touchstart', slide.eventTouch.start, false);
+            elm.slideBox.addEventListener('touchend', slide.eventTouch.end, false);
+        };
+        this.destroy = function () {
+            elm.btnBack.removeEveclicktener('touchend', slide.eventBack, false);
+            elm.btnNext.removeEveclicktener('touchend', slide.eventNext, false);
+            elm.slideBox.removeEveclicktener('touchstart', slide.eventTouch.start, false);
+            elm.slideBox.removeEveclicktener('touchend', slide.eventTouch.end, false);
+            clearInterval(slide.cleanAuto);
+            o = elm = _self = slide = null;
         };
         this._init();
     };
