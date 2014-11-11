@@ -31,8 +31,8 @@
         <li><a href="#"><img src="image/img4.jpg" alt="图片4" /></a></li>
         <li><a href="#"><img src="image/img5.jpg" alt="图片5" /></a></li>
     </ul>
-    <a class="btn left_btn" href="javascript:" title="上一张">后退</a>
-    <a class="btn right_btn" href="javascript:" title="下一张">前进</a>
+    <!--<a class="btn left_btn" href="javascript:" title="上一张">后退</a>-->
+    <!--<a class="btn right_btn" href="javascript:" title="下一张">前进</a>-->
 </div>
 <script src="../../src/sea.js"></script>
 <script>
@@ -40,7 +40,6 @@
         var slide = new Slider({
             slideBox: '#slideBox',              //焦点图容器
             imgChild: '#slideBox li',           //焦点图列表
-            cycle: true,                       //是否循环播放
             pointBoxClass: 'dian_con',          //点的容器样式，如果为空不生成'点'列表
             touch: true,                       //触摸事件
             btnBack: '#slideBox .left_btn',     //后退按钮

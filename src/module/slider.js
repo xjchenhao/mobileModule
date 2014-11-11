@@ -11,7 +11,6 @@
         var o = {
             slideBox: '#slideBox',              //焦点图容器
             imgChild: '#slideBox li',           //焦点图列表
-            cycle: true,                       //是否循环播放
             pointBoxClass: '',                  //点的容器样式，如果为空不生成'点'列表
             touch: true,                       //触摸事件
             btnBack: '#slideBox .left_btn',     //后退按钮
@@ -23,9 +22,11 @@
         var slide = {
             distances: 0,                           //滚动的距离，即元素的宽度
             imgLength: 0,                           //轮播图元素个数
+            isBack: false,                         //播放方向
             cleanAuto: 0,                           //自动播放的计时器变量
             transitionVal: '',                      //暂存transition属性
             animationInit: '',                      //动画函数
+            transitionCallback: '',                 //动画事件回调函数
             eventNext: '',                          //前进事件函数
             eventBack: '',                          //后退事件函数
             eventTouch: {start: '', end: ''}        //触摸事件
@@ -50,18 +51,16 @@
             elm.btnBack = document.querySelector(o.btnBack);
             elm.btnNext = document.querySelector(o.btnNext);
             elm.imgBox = elm.imgChild[0].parentElement;
-            slide.imgLength = o.cycle ? elm.imgChild.length + 1 : elm.imgChild.length;
+            slide.imgLength = elm.imgChild.length + 1;
             slide.distances = elm.imgChild[0].clientWidth;
             slide.transitionVal = window.getComputedStyle(elm.imgBox, null)['transition'];
             elm.imgBox.style.width = slide.imgLength * slide.distances + 'px';
-            o.cycle && function () {
-                elm.imgBox.appendChild(elm.imgChild[0].cloneNode(true));
-            }();
+            elm.imgBox.appendChild(elm.imgChild[0].cloneNode(true));
             if (o.speed) {
                 slide.animationInit = function () {
                     clearInterval(slide.cleanAuto);
                     this.timer = function () {
-                        _self.transition(_self.index);
+                        _self.transition(_self.index, false);
                     };
                     slide.cleanAuto = setInterval(this.timer, o.speed);
                 };
@@ -84,48 +83,68 @@
             o.touch && _self.touch();
             if (elm.btnBack) {
                 slide.eventBack = function () {
-                    _self.transition(_self.index, 'back');
+                    _self.transition(_self.index, true);
                 };
                 elm.btnBack.addEventListener('touchend', slide.eventBack, false);
             }
             if (elm.btnNext) {
                 slide.eventNext = function () {
-                    _self.transition(_self.index, 'next');
+                    _self.transition(_self.index, false);
                 };
                 elm.btnNext.addEventListener('touchend', slide.eventNext, false);
             }
-        };
-        this.transition = function (index, direction) {
-            _self.index = index;
-            o.speed && slide.animationInit();
-            if (direction === undefined || direction === 'next') {
-                _self.index++;
-            } else if (direction === 'back') {
-                _self.index--;
-            }
-            if (_self.index >= slide.imgLength || _self.index < 0) {
-                if (direction === undefined || direction === 'next') {
-                    _self.index = o.cycle ? '0' : --_self.index;
-                } else if (direction === 'back') {
-                    _self.index = o.cycle ? slide.imgLength - 1 : ++_self.index;
-                }
-                ['-webkit-transition', 'transition'].forEach(function (attr) {
-                    elm.imgBox.style[attr] = 'inherit';
-                });
-                ['-webkit-transform', 'transform'].forEach(function (attr) {
-                    elm.imgBox.style[attr] = 'translate(0,0)';
-                });
-                setTimeout(function () {
+            slide.transitionCallback = function () {
+                if (_self.index >= slide.imgLength - 1) {
                     ['-webkit-transition', 'transition'].forEach(function (attr) {
-                        elm.imgBox.style[attr] = slide.transitionVal;
+                        elm.imgBox.style[attr] = 'inherit';
                     });
-                }, 0);
+                    ['-webkit-transform', 'transform'].forEach(function (attr) {
+                        elm.imgBox.style[attr] = 'translate(0,0)';
+                    });
+                    setTimeout(function () {
+                        ['-webkit-transition', 'transition'].forEach(function (attr) {
+                            elm.imgBox.style[attr] = slide.transitionVal;
+                        });
+                        _self.index = 0;
+                    }, 0);
+                }
+                o.callback && o.callback(_self);
+            };
+            elm.imgBox.addEventListener('webkitTransitionEnd', slide.transitionCallback);
+        };
+        this.transition = function (index, isBack) {
+            _self.index = index;
+            slide.isBack = isBack;
+            o.speed && slide.animationInit();
+            slide.isBack ? _self.index-- : _self.index++;
+            if (_self.index >= slide.imgLength || _self.index < 0) {
+                if (slide.isBack) {
+                    _self.index = slide.imgLength - 1;
+                    ['-webkit-transition', 'transition'].forEach(function (attr) {
+                        elm.imgBox.style[attr] = 'inherit';
+                    });
+                    ['-webkit-transform', 'transform'].forEach(function (attr) {
+                        elm.imgBox.style[attr] = 'translate(' + -(slide.imgLength - 1) * slide.distances + 'px,0)';
+                    });
+                    setTimeout(function () {
+                        ['-webkit-transition', 'transition'].forEach(function (attr) {
+                            elm.imgBox.style[attr] = slide.transitionVal;
+                        });
+                        _self.index = slide.imgLength - 1;
+                    }, 0);
+                } else {
+                    _self.index = '0';
+                }
+            } else {
+                if (_self.index >= slide.imgLength - 1 || _self.index < 0) {
+                    _self.point(0);
+                } else {
+                    _self.point(_self.index);
+                }
             }
-            _self.point(_self.index);
             ['-webkit-transform', 'transform'].forEach(function (attr) {
                 elm.imgBox.style[attr] = 'translate(' + -_self.index * slide.distances + 'px,0)';
             });
-            o.callback && o.callback(_self);
         };
         this.point = function (index) {
             for (var i = 0, l = elm.imgChild.length; i < l; i++) {
@@ -146,9 +165,9 @@
             slide.eventTouch.end = function () {
                 _this.endX = event.changedTouches[0].clientX;
                 if (_this.endX - _this.startX > slide.distances / 4) {
-                    _self.transition(_self.index, 'back');
+                    _self.transition(_self.index, true);
                 } else if (_this.endX - _this.startX < -slide.distances / 4) {
-                    _self.transition(_self.index, 'next');
+                    _self.transition(_self.index, false);
                 }
             };
             elm.slideBox.addEventListener('touchstart', slide.eventTouch.start, false);
@@ -159,6 +178,7 @@
             elm.btnNext.removeEveclicktener('touchend', slide.eventNext, false);
             elm.slideBox.removeEveclicktener('touchstart', slide.eventTouch.start, false);
             elm.slideBox.removeEveclicktener('touchend', slide.eventTouch.end, false);
+            elm.slideBox.removeEveclicktener('webkitTransitionEnd', slide.transitionCallback);
             clearInterval(slide.cleanAuto);
             o = elm = _self = slide = null;
         };
