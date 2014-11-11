@@ -50,12 +50,15 @@
             elm.imgChild = document.querySelectorAll(o.imgChild);
             elm.btnBack = document.querySelector(o.btnBack);
             elm.btnNext = document.querySelector(o.btnNext);
+            slide.distances = elm.imgChild[0].clientWidth;
             elm.imgBox = elm.imgChild[0].parentElement;
             slide.imgLength = elm.imgChild.length + 1;
-            slide.distances = elm.imgChild[0].clientWidth;
             slide.transitionVal = window.getComputedStyle(elm.imgBox, null)['transition'];
             elm.imgBox.style.width = slide.imgLength * slide.distances + 'px';
             elm.imgBox.appendChild(elm.imgChild[0].cloneNode(true));
+            for(var i= 0;i<slide.imgLength-1;i++){
+                elm.imgChild[i].style.width=slide.distances+'px';
+            }
             if (o.speed) {
                 slide.animationInit = function () {
                     clearInterval(slide.cleanAuto);
