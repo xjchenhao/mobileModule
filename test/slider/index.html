@@ -6,7 +6,7 @@
           content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
     <title>焦点图模块Demo</title>
     <style>
-        * { margin: 0; padding: 0; list-style: none;}
+        * { margin: 0; padding: 0; list-style: none; }
 
         #slideBox { position: absolute; width: 100%; height: 100%; overflow: hidden; }
 
@@ -22,31 +22,31 @@
 <script src="../../src/sea.js"></script>
 <script>
     seajs.use("module/slider.js", function (Slider) {
-        var imgList=[
+        var imgList = [
             {
                 height: 414,
                 width: 300,
                 content: "image/img1.jpg"
                 //content: "http://img.bleacherreport.net/img/article/media_slots/photos/001/798/470/d77fa9e5eb6e04bc2e2b45f8b9898029_crop_exact.jpg?w=340&h=226&q=85"
-            },{
+            }, {
                 height: 414,
                 width: 300,
                 content: "image/img2.jpg"
                 //content: "http://img.bleacherreport.net/img/article/media_slots/photos/001/798/496/d7868f5acd3a560e7d18367d78afaea6_crop_exact.jpg?w=340&h=226&q=85"
-            },{
+            }, {
                 height: 414,
                 width: 300,
                 content: "image/img3.jpg"
                 //content:"http://img.bleacherreport.net/img/article/media_slots/photos/001/798/506/c386571300441003569117f9364696b4_crop_exact.jpg?w=340&h=226&q=85"
             }
         ];
-        var slide=new Slider({
-            dom:document.getElementById('slideBox'),
-            data:imgList,
-            isAutoplay:true,
-            isLooping:true,
-            onslidechange:function(page){
-             console.log(page);
+        var slide = new Slider({
+            dom: document.getElementById('slideBox'),
+            data: imgList,
+            isAutoplay: true,
+            isLooping: true,
+            onslidechange: function (page) {
+                console.log(page);
             }
         });
     });
