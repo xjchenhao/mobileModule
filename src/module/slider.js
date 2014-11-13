@@ -20,13 +20,14 @@
         this._renderHTML();
         //this._bindHandler();    //todo:绑定事件
     };
+    /*初始设置*/
     Slider.prototype._setting = function () {
         var opts = this._opts;
 
         /*初始化user data*/
-        this.wrap = opts.dom;                              //容器
-        this.data = opts.data;                             //数据
-        this.type = opts.type || 'pic';                  //焦点图类型,支持dom和pic
+        this.wrap = opts.dom;                            //容器
+        this.data = opts.data;                           //数据
+        this.type = opts.type || 'pic';                  //焦点图类型
         this.isVertical = opts.isVertical || false;     //是否垂直
         this.duration = opts.duration || 2000;           //自动滑动时的间隔时间(毫秒)
 
@@ -37,6 +38,12 @@
         this.ratio = this.height / this.width;
         this.scale = opts.isVertical ? this.height : this.width;
         this.sliderIndex = this.sliderIndex || 0;
+
+        /*回调函数*/
+        this.onslidestart = opts.onslidestart;      //触摸开始时
+        this.onslideend = opts.onslideend;          //触摸结束时
+        this.onslidemove = opts.onslidemove;        //触摸滑动过程中
+        this.onslidechange = opts.onslidechange;    //切换前
 
         /*数量决定是否切换*/
         if (this.data.length < 2) {
@@ -125,6 +132,60 @@
         }
         //todo:切它动画类别待补充
     };
+    /*主逻辑*/
+    Slider.prototype._slide = function (n) {
+        var data = this.data,
+            els = this.els,
+            idx = this.sliderIndex + n;
+        if (data[idx]) {
+            this.sliderIndex = idx;
+        } else {
+            if (this.isLooping) {
+                this.sliderIndex = n > 0 ? 0 : data.length - 1;
+            } else {
+                n = 0;
+            }
+        }
+        /*置换dom*/
+        var sEle;
+        if (this.isVertical) {
+            //todo:rotate和flip动画垂直的处理
+        } else {
+            if (n > 0) {
+                sEle = els.shift();
+                els.push(sEle);
+            } else if (n < 0) {
+                sEle = els.pop();
+                els.unshift(sEle);
+            }
+        }
+        /*置换位置的dom禁止动画*/
+        if (n !== 0) {
+            sEle.innerHTML = this._renderItem(idx + n);
+            sEle.style.webkitTransition = 'none';
+            sEle.style.visibility = 'hidden';
+
+            setTimeout(function () {
+                sEle.style.visibility = 'visible';
+            }, 200);
+
+            this.onslidechange && this.onslidechange(this.sliderIndex);
+        }
+
+        /*li通过样式置换顺序*/
+        for (var i = 0; i < 3; i++) {
+            if (els[i] !== sEle) {
+                els[i].style.webkitTransition = 'all .3s ease';
+            }
+            this._animateFunc(els[i], this.axis, this.scale, i, 0);
+        }
+        /*是否需要停止自动播放*/
+        if (this.isAutoplay) {
+            if (this.sliderIndex === data.length - 1 && !this.isLooping) {
+                this.pause();
+            }
+        }
+    };
     /*禁止安卓不在当前页面也自动播放*/
     Slider.prototype._setPlayWhenFocus = function () {
         var self = this;
@@ -134,6 +195,23 @@
         window.addEventListener('blur', function () {
             self.pause();
         }, false);
+
+    };
+    /*自动播放*/
+    Slider.prototype.play = function () {
+        var self = this;
+        clearInterval(this.autoPlayTimer);
+        this.autoPlayTimer = setInterval(function () {
+            self._slide(1);
+        }, self.duration);
+    };
+    /*清除计时器*/
+    Slider.prototype.pause = function () {
+        clearInterval(this.autoPlayTimer);
+    };
+    /*内存回收*/
+    Slider.prototype.destroy = function () {
+        this.pause();
     };
     return Slider;
 });

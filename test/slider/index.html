@@ -42,7 +42,12 @@
         ];
         var slide=new Slider({
             dom:document.getElementById('slideBox'),
-            data:imgList
+            data:imgList,
+            isAutoplay:true,
+            isLooping:true,
+            onslidechange:function(page){
+             console.log(page);
+            }
         });
     });
 </script>
