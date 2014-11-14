@@ -40,10 +40,12 @@
         this.sliderIndex = this.sliderIndex || 0;
 
         /*回调函数*/
-        this.onslidestart = opts.onslidestart;      //触摸开始时
-        this.onslideend = opts.onslideend;          //触摸结束时
-        this.onslidemove = opts.onslidemove;        //触摸滑动过程中
-        this.onslidechange = opts.onslidechange;    //切换前
+        this.callback = {
+            onslidestart: opts.onslidestart,      //触摸开始时
+            onslideend: opts.onslideend,          //触摸结束时
+            onslidemove: opts.onslidemove,        //触摸滑动过程中
+            onslidechange: opts.onslidechange     //切换前
+        };
 
         /*数量决定是否切换*/
         if (this.data.length < 2) {
@@ -169,7 +171,7 @@
                 sEle.style.visibility = 'visible';
             }, 200);
 
-            this.onslidechange && this.onslidechange(this.sliderIndex);
+            this.callback.onslidechange && this.callback.onslidechange(this.sliderIndex);
         }
 
         /*li通过样式置换顺序*/
@@ -206,7 +208,7 @@
                 evt.preventDefault();
                 self.pause();
                 isMoving = true;
-                self.onslidestart && self.onslidestart();
+                self.callback.onslidestart && self.callback.onslidestart();
                 /*记录开始时间和坐标*/
                 self.startTime = new Date().getTime();
                 self.startX = self.touch.hasTouch ? evt.targetTouches[0].pageX : evt.pageX;
@@ -231,6 +233,7 @@
                         item.style.webkitTransition = 'all 0s';
                         self._animateFunc(item, axis, self.scale, i, offset);
                     }
+                    self.callback.onslidemove && self.callback.onslidemove();
                     self.offset = offset;       //记录偏移量
                 }
             },
@@ -252,11 +255,11 @@
                 }
                 self.isAutoplay && self.play();             //开启自动播放
                 self.offset = 0;                            //偏移量归零
-                self.onslideend && self.onslideend();
+                self.callback.onslideend && self.callback.onslideend();
             },
             orientation: function (evt) {
                 //setTimeout(function () {
-                    self.reset();
+                self.reset();
                 //}, 100);
             }
         };
