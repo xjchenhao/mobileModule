@@ -18,7 +18,7 @@
         this._opts = opts;
         this._setting();
         this._renderHTML();
-        //this._bindHandler();    //todo:绑定事件
+        this._bindHandler();
     };
     /*初始设置*/
     Slider.prototype._setting = function () {
@@ -186,6 +186,85 @@
             }
         }
     };
+    /*事件绑定*/
+    Slider.prototype._bindHandler = function () {
+        var self = this,
+            isMoving = false,         //是否在触摸过程中
+            outer = this.outer,
+            hasTouch = (function () {
+                return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+            })();
+        this.touch = {
+            hasTouch: hasTouch,
+            startEvt: hasTouch ? 'touchstart' : 'mousedown',
+            moveEvt: hasTouch ? 'touchmove' : 'mousemove',
+            endEvt: hasTouch ? 'touchend' : 'mouseup',
+            sizeEvt: hasTouch ? 'orientationchange' : 'resize'
+        };
+        this.event = {
+            start: function (evt) {
+                evt.preventDefault();
+                self.pause();
+                isMoving = true;
+                self.onslidestart && self.onslidestart();
+                /*记录开始时间和坐标*/
+                self.startTime = new Date().getTime();
+                self.startX = self.touch.hasTouch ? evt.targetTouches[0].pageX : evt.pageX;
+                self.startY = self.touch.hasTouch ? evt.targetTouches[0].pageY : evt.pageY;
+            },
+            move: function (evt) {
+                if (isMoving) {
+                    evt.preventDefault();
+                    self.onslide && self.onslide();
+                    var axis = self.axis,
+                        currentPoint = self.touch.hasTouch ? evt.targetTouches[0]['page' + axis] : evt['page' + axis],
+                        offset = currentPoint - self['start' + axis];
+                    /*todo:开头结尾的回弹*/
+                    if (!self.isLooping) {
+                        if (offset > 0 && self.sliderIndex === 0 || offset < 0 && self.sliderIndex === self.data.length - 1) {
+                            //offset = self._damping(offset);
+                        }
+                    }
+                    /*根据offset，位置调整*/
+                    for (var i = 0; i < 3; i++) {
+                        var item = self.els[i];
+                        item.style.webkitTransition = 'all 0s';
+                        self._animateFunc(item, axis, self.scale, i, offset);
+                    }
+                    self.offset = offset;       //记录偏移量
+                }
+            },
+            end: function (evt) {
+                evt.preventDefault();
+                isMoving = false;
+                var boundary = self.scale / 2,                               //切换的临界值
+                    metric = self.offset,                                    //获取偏移量
+                    endTime = new Date().getTime();                         //结束时的时间
+                boundary = endTime - self.startTime > 300 ? boundary : 14;   //即使是快速切换也要距离大于14
+
+                /*执行主逻辑置换顺序*/
+                if (metric >= boundary) {
+                    self._slide(-1);
+                } else if (metric < -boundary) {
+                    self._slide(1);
+                } else {
+                    self._slide(0);
+                }
+                self.isAutoplay && self.play();             //开启自动播放
+                self.offset = 0;                            //偏移量归零
+                self.onslideend && self.onslideend();
+            },
+            orientation: function (evt) {
+                //setTimeout(function () {
+                    self.reset();
+                //}, 100);
+            }
+        };
+        outer.addEventListener(self.touch.startEvt, self.event.start);
+        outer.addEventListener(self.touch.moveEvt, self.event.move);
+        outer.addEventListener(self.touch.endEvt, self.event.end);
+        window.addEventListener(self.touch.sizeEvt, self.event.orientation);
+    };
     /*禁止安卓不在当前页面也自动播放*/
     Slider.prototype._setPlayWhenFocus = function () {
         var self = this;
@@ -209,9 +288,22 @@
     Slider.prototype.pause = function () {
         clearInterval(this.autoPlayTimer);
     };
+    //重置
+    Slider.prototype.reset = function () {
+        this.pause();
+        this._setting();
+        this._renderHTML();
+        this.isAutoplay && this.play();
+    };
     /*内存回收*/
     Slider.prototype.destroy = function () {
+        var self = this,
+            outer = this.outer;
         this.pause();
+        outer.removeEventListener(self.touch.startEvt, self.event.start);
+        outer.removeEventListener(self.touch.moveEvt, self.event.move);
+        outer.removeEventListener(self.touch.endEvt, self.event.end);
+        window.removeEventListener(self.touch.sizeEvt, self.event.orientation);
     };
     return Slider;
 });
