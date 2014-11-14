@@ -7,13 +7,9 @@
     <title>焦点图模块Demo</title>
     <style>
         * { margin: 0; padding: 0; list-style: none; }
-
         #slideBox { position: absolute; width: 100%; height: 100%; overflow: hidden; }
-
         #slideBox ul { height: 100%; overflow: hidden; }
-
         #slideBox li { position: absolute; height: 100%; overflow: hidden; display: -webkit-box; -webkit-box-pack: center; -webkit-box-align: center; }
-
         #slideBox img { max-width: 100%; max-height: 100%; }
     </style>
 </head>
@@ -27,24 +23,25 @@
                 height: 500,
                 width: 282,
                 content: "image/img1.jpg"
-                //content: "http://img.bleacherreport.net/img/article/media_slots/photos/001/798/470/d77fa9e5eb6e04bc2e2b45f8b9898029_crop_exact.jpg?w=340&h=226&q=85"
+//                content: "<img height='100%' width='100%' src='image/img1.jpg' />"
             }, {
                 height: 500,
                 width: 282,
                 content: "image/img2.jpg"
-                //content: "http://img.bleacherreport.net/img/article/media_slots/photos/001/798/496/d7868f5acd3a560e7d18367d78afaea6_crop_exact.jpg?w=340&h=226&q=85"
+//                content: "<img height='100%' width='100%' src='image/img3.jpg' />"
             }, {
                 height: 500,
                 width: 333,
                 content: "image/img3.jpg"
-                //content:"http://img.bleacherreport.net/img/article/media_slots/photos/001/798/506/c386571300441003569117f9364696b4_crop_exact.jpg?w=340&h=226&q=85"
+//                content: "<img height='100%' width='100%' src='image/img3.jpg' />"
             }
         ];
         var slide = new Slider({
             dom: document.getElementById('slideBox'),
             data: imgList,
             isAutoplay: true,
-            isLooping: true,
+            isLooping: false,
+            type: 'pic',
             onslidechange: function (page) {
                 console.log(page); //回调页码
             }
