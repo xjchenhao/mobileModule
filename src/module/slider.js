@@ -19,6 +19,7 @@
         this._setting();
         this._renderHTML();
         this._bindHandler();
+        this._setPlayWhenFocus();
     };
     /*初始设置*/
     Slider.prototype._setting = function () {
@@ -42,8 +43,8 @@
         /*回调函数*/
         this.callback = {
             onslidestart: opts.onslidestart,      //触摸开始时
-            onslideend: opts.onslideend,          //触摸结束时
-            onslidemove: opts.onslidemove,        //触摸滑动过程中
+            onslideend: opts.onslideend,//触摸结束时
+            onslidemove: opts.onslidemove,//触摸滑动过程中
             onslidechange: opts.onslidechange     //切换前
         };
 
@@ -60,12 +61,8 @@
         if (this.isAutoplay) {
             this.play();
         }
-        /*todo：挂载第一张和最后的回弹*/
-        //this._setUpDamping();
         /*动画类型*/
         this._animateFunc = (opts.animateType in this._animateFuncs) ? this._animateFuncs[opts.animateType] : this._animateFuncs['default'];
-        /*防止安卓在转出后也自动播放*/
-        this._setPlayWhenFocus();
     };
     /*生成图片列表*/
     Slider.prototype._renderHTML = function () {
@@ -121,9 +118,11 @@
                 ? '<img height="' + this.height + '" src="' + item.content + '">'
                 : '<img width="' + this.width + '" src="' + item.content + '">';
         } else if (this.type = 'dom') {
-            //todo:插入dom后面待补充
+            html = '<div style="height:' + item.height + ';width:' + item.width + ';">' + item.content + '</div>';
         } else if (this.type === 'overspread') {
-            //todo:插入背景图片后面待补充
+            html = this.ratio < 1
+                ? '<div style="height: 100%; width:100%; background:url(' + item.content + ') center no-repeat; background-size:' + this.width + 'px auto;"></div>'
+                : '<div style="height: 100%; width:100%; background:url(' + item.content + ') center no-repeat; background-size: auto ' + this.height + 'px;"></div>'
         }
         return html;
     };
@@ -221,12 +220,6 @@
                     var axis = self.axis,
                         currentPoint = self.touch.hasTouch ? evt.targetTouches[0]['page' + axis] : evt['page' + axis],
                         offset = currentPoint - self['start' + axis];
-                    /*todo:开头结尾的回弹*/
-                    if (!self.isLooping) {
-                        if (offset > 0 && self.sliderIndex === 0 || offset < 0 && self.sliderIndex === self.data.length - 1) {
-                            //offset = self._damping(offset);
-                        }
-                    }
                     /*根据offset，位置调整*/
                     for (var i = 0; i < 3; i++) {
                         var item = self.els[i];
@@ -258,9 +251,15 @@
                 self.callback.onslideend && self.callback.onslideend();
             },
             orientation: function (evt) {
-                //setTimeout(function () {
-                self.reset();
-                //}, 100);
+                setTimeout(function () {
+                    self.reset();
+                }, 100);
+            },
+            focus: function (evt) {
+                self.isAutoplay && self.play();
+            },
+            blur: function (evt) {
+                self.pause();
             }
         };
         outer.addEventListener(self.touch.startEvt, self.event.start);
@@ -271,12 +270,8 @@
     /*禁止安卓不在当前页面也自动播放*/
     Slider.prototype._setPlayWhenFocus = function () {
         var self = this;
-        window.addEventListener('focus', function () {
-            self.isAutoplay && self.play();
-        }, false);
-        window.addEventListener('blur', function () {
-            self.pause();
-        }, false);
+        window.addEventListener('focus', self.event.focus, false);
+        window.addEventListener('blur', self.event.blur, false);
 
     };
     /*自动播放*/
@@ -306,7 +301,10 @@
         outer.removeEventListener(self.touch.startEvt, self.event.start);
         outer.removeEventListener(self.touch.moveEvt, self.event.move);
         outer.removeEventListener(self.touch.endEvt, self.event.end);
+        window.removeEventListener('focus', self.event.focus, false);
+        window.removeEventListener('blur', self.event.blur, false);
         window.removeEventListener(self.touch.sizeEvt, self.event.orientation);
+        this.wrap.innerHTML = '';
     };
     return Slider;
 });
