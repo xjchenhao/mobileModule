@@ -41,7 +41,7 @@
  *  isAutoplay       是否自动播放（默认true）
  *  isLooping        是否循环切换（默认true）
  *  type             插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
- *  animateType      动画类型，支持‘default’、'rotate'、'flip'、'depth'、'flow'、'card'（默认default）
+ *  animateType      动画类型，暂时只支持‘default’（默认default）
  *  duration         切换间隔时间（默认2000毫秒）
  *  onslidestart     触摸开始时回调函数
  *  onslidemove      触摸移动过程中回调函数
