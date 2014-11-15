@@ -1,3 +1,54 @@
+/**
+ * slider焦点图      1.0.0
+ * eg:
+ * <div id="slideName"></div>
+ *  var imgList = [
+     {
+         height: 500,
+         width: 282,
+         content: "image/img1.jpg"
+            //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
+     }, {
+        height: 500,
+        width: 282,
+        content: "image/img2.jpg"
+        //content: "<img height='100%' width='100%' src='image/img3.jpg' />"
+    }, {
+        height: 500,
+        width: 333,
+        content: "image/img3.jpg"
+        //content: "<img height='100%' width='100%' src='image/img3.jpg' />"
+    }
+ ];
+ * var slide = new Slider({
+ *     dom: document.getElementById('slideBox'),
+ *     data: imgList,
+ *     isAutoplay: true,
+ *     isLooping: false,
+ *     type: 'pic',
+ *     animateType:'default',
+ *     duration:3000,
+ *     onslidestart:function(){},
+ *     onslidemove:function(){},
+ *     onslideend:function(){},
+ *     onslidechange: function (page) {
+ *         console.log(page); //回调页码
+ *    }
+ * });
+ * Ps:
+ *  dom              对应的容器dom（必填）
+ *  data             插入的数据，格式如上面的imgList数组（必填）
+ *  isAutoplay       是否自动播放（默认true）
+ *  isLooping        是否循环切换（默认true）
+ *  type             插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
+ *  animateType      动画类型，支持‘default’、'rotate'、'flip'、'depth'、'flow'、'card'（默认default）
+ *  duration         切换间隔时间（默认2000毫秒）
+ *  onslidestart     触摸开始时回调函数
+ *  onslidemove      触摸移动过程中回调函数
+ *  onslideend       触摸结束后回调函数
+ *  onslidechange    焦点图切换前的回调函数
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (exports) {
