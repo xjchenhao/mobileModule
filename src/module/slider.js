@@ -1,14 +1,14 @@
 /**
- * slider焦点图      1.0.0
+ * slider焦点图      1.0.1
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
-     {
-         height: 500,
-         width: 282,
-         content: "image/img1.jpg"
-            //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
-     }, {
+ {
+     height: 500,
+     width: 282,
+     content: "image/img1.jpg"
+        //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
+ }, {
         height: 500,
         width: 282,
         content: "image/img2.jpg"
@@ -82,9 +82,9 @@
         this.type = opts.type || 'pic';                  //焦点图类型
         this.isVertical = opts.isVertical || false;     //是否垂直
         this.duration = opts.duration || 2000;           //自动滑动时的间隔时间(毫秒)
+        this.axis = this.isVertical ? 'Y' : 'X';        //方向
 
         /*基本设置*/
-        this.axis = this.isVertical ? 'Y' : 'X';
         this.width = this.wrap.clientWidth;
         this.height = this.wrap.clientHeight;
         this.ratio = this.height / this.width;
@@ -94,8 +94,8 @@
         /*回调函数*/
         this.callback = {
             onslidestart: opts.onslidestart,      //触摸开始时
-            onslideend: opts.onslideend,//触摸结束时
-            onslidemove: opts.onslidemove,//触摸滑动过程中
+            onslideend: opts.onslideend,          //触摸结束时
+            onslidemove: opts.onslidemove,        //触摸滑动过程中
             onslidechange: opts.onslidechange     //切换前
         };
 
@@ -200,17 +200,17 @@
         }
         /*置换dom*/
         var sEle;
-        if (this.isVertical) {
-            //todo:rotate和flip动画垂直的处理
-        } else {
-            if (n > 0) {
-                sEle = els.shift();
-                els.push(sEle);
-            } else if (n < 0) {
-                sEle = els.pop();
-                els.unshift(sEle);
-            }
+        //if (this.isVertical) {
+        //    //todo:rotate和flip动画垂直的处理
+        //} else {
+        if (n > 0) {
+            sEle = els.shift();
+            els.push(sEle);
+        } else if (n < 0) {
+            sEle = els.pop();
+            els.unshift(sEle);
         }
+        //}
         /*置换位置的dom禁止动画*/
         if (n !== 0) {
             sEle.innerHTML = this._renderItem(idx + n);
