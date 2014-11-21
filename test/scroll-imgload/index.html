@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>图片滚动加载</title>
+    <style>
+        * { margin: 0; padding: 0; list-style: none }
+        .img-load-box {
+            font-size: 0;
+        }
+        .img-load-box li {
+            display: inline-block;
+            width: 50%;
+            padding-bottom: 30%;
+            height: 0;
+            overflow: hidden;
+        }
+        .img-load-box img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<ul class="img-load-box">
+    <li><img data-src="image/img-load1.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load2.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load3.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load4.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load5.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load6.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load7.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load8.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load9.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load10.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load11.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load12.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load13.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load14.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load15.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load16.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load17.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load18.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load19.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load20.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load21.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load22.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load23.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load24.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load25.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load26.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load27.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load28.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load29.jpg" src="image/placeholder-img.gif" alt=""></li>
+    <li><img data-src="image/img-load30.jpg" src="image/placeholder-img.gif" alt=""></li>
+</ul>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use("module/scroll-imgload.js", function (ImgLoad) {
+        var ImgLoad = new ImgLoad({
+            ele: document.querySelectorAll("ul img"),
+            attr: 'data-src',
+            container: window,
+            callback: ''
+        });
+//        ImgLoad.destroy();
+    });
+</script>
+</body>
+</html>
