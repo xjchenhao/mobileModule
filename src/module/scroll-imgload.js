@@ -1,5 +1,5 @@
 /**
- * scroll-imgload图片滚动加载      1.0.0
+ * scroll-imgload图片滚动加载      1.0.1
  * eg:
  *
  * <ul>
@@ -66,7 +66,7 @@
         var self = this,
             isMoving = 0,              //是否在触摸过程中
             scrollTop = post = posb = 0;
-        hasTouch = (function () {
+        var hasTouch = (function () {
             return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
         })();
         this.event = {
