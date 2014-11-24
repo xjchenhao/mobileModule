@@ -21,14 +21,19 @@
         this.callback = opts.callback;
     };
     Infinite.prototype._bindHandler = function () {
-        var self = this;
-        this.event = {
+        var self = this,
+            isLoging=true;
+        self.page=0;
+        self.event = {
             scroll: function (e) {
                 var boxHeight = self.box.clientHeight,
                     contentHeight = self.con.clientHeight,
                     scrollY = Number(e.target.scrollTop);
-                if (scrollY >= contentHeight - boxHeight) {
-                    self.callback();
+                if (scrollY >= contentHeight - boxHeight&& isLoging===true) {
+                    self.page+=1;
+                    isLoging=false;
+                    isLoging=self.callback();
+                    console.log(isLoging);
                 }
             }
         };
