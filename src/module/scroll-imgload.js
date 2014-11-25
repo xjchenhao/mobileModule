@@ -79,6 +79,7 @@
                 }, 300);
             },
             scroll: function (e) {
+                var attr='';
                 ImgLoad.cache.forEach(function (data) {
                     if (data.node) {
                         scrollTop = self.container === window ?
@@ -91,7 +92,10 @@
                                 data.node.setAttribute('src', data.url);
                                 this.callback && this.callback(data.node);
                             }else{
-                                data.node.setAttribute('style', data.node.getAttribute('style')+';background-image:url('+data.url+')');
+                                attr=data.node.getAttribute('style') ?
+                                    data.node.getAttribute('style')+';':
+                                    '';
+                                data.node.setAttribute('style', attr+'background-image:url('+data.url+')');
                                 this.callback && this.callback(data.node);
                             }
                             data.node = null;
