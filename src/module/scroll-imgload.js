@@ -1,5 +1,5 @@
 /**
- * scroll-imgload图片滚动加载      1.0.1
+ * scroll-imgload图片滚动加载      1.0.2
  * eg:
  *
  * <ul>
