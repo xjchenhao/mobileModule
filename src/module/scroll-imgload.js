@@ -71,7 +71,6 @@
         })();
         this.event = {
             start: function (e) {
-                isMoving = true;
                 clearTimeout(isMoving);
             },
             end: function (e) {
@@ -90,6 +89,9 @@
                         if (post >= 0 && post < self.boxHeight || posb > 0 && posb <= self.boxHeight) {
                             if (data.tag === 'img') {
                                 data.node.setAttribute('src', data.url);
+                                this.callback && this.callback(data.node);
+                            }else{
+                                data.node.setAttribute('style', data.node.getAttribute('style')+';background-image:url('+data.url+')');
                                 this.callback && this.callback(data.node);
                             }
                             data.node = null;

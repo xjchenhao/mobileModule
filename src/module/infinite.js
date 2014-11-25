@@ -33,7 +33,6 @@
                     self.page+=1;
                     isLoging=false;
                     isLoging=self.callback();
-                    console.log(isLoging);
                 }
             }
         };
