@@ -1,3 +1,43 @@
+/**
+ * 无限下拉加载      1.0.0
+ * eg:
+ * <div id="page">
+ *      <ul>
+ *          <li>我是文章标题</li>
+ *          <li>我是文章标题</li>
+ *          <li>我是文章标题</li>
+ *          <li>我是文章标题</li>
+ *          <li>我是文章标题</li>
+ *          <li>我是文章标题</li>
+ *      </ul>
+ * </div>
+ *
+ * var infinite = new Infinite({
+ *     box: document.getElementById('page'),
+ *     con: document.querySelector('#page ul'),
+ *     callback: function () {
+ *         var isLoging = false;
+ *         $.ajax({
+ *             url: "./ajax/list.json",
+ *             type: "post",
+ *             dataType: "json",
+ *             async: false,
+ *             success: function (data) {
+ *                 var tpl = document.getElementById('pageDate').innerHTML;
+ *                 var myTemplate = Handlebars.compile(tpl);
+ *                 document.querySelector('#page ul').innerHTML += myTemplate(data);
+ *                 isLoging = true;
+ *             }
+ *         });
+ *         return isLoging;
+ *     }
+ * });
+ * Ps:
+ *  box              elementObj，对应的容器dom（必填）
+ *  con              elementObj，加载数据的容器（必填）
+ *  callback         function，滚动到底部的回调函数，需要return true告诉组件数据加载完毕!
+ *  destroy          function，销毁对象内存回收
+ */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (exports) {

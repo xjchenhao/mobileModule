@@ -17,10 +17,11 @@
  * });
  * //ImgLoad.destroy();        //销毁类，内存回收
  * Ps:
- *  ele              哪些图片需要懒加载（必填）
- *  attr             存储图片真实地址的增强属性(默认data-src)
- *  container        是什么容器在滚动
- *  callback         执行图片加载后的回调函数(一个参数，当前的图片节点对象)
+ *  ele              elementList，哪些图片需要懒加载（必填）
+ *  attr             string，存储图片真实地址的增强属性(默认data-src)
+ *  container        elementObj，是什么容器在滚动
+ *  callback         function，执行图片加载后的回调函数(一个参数，当前的图片节点对象)
+ *  destroy          function，销毁对象内存回收
  */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {

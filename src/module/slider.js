@@ -25,6 +25,7 @@
  *     data: imgList,
  *     isAutoplay: true,
  *     isLooping: false,
+ *     isVertical:false,
  *     type: 'pic',
  *     animateType:'default',
  *     duration:3000,
@@ -36,17 +37,19 @@
  *    }
  * });
  * Ps:
- *  dom              对应的容器dom（必填）
- *  data             插入的数据，格式如上面的imgList数组（必填）
- *  isAutoplay       是否自动播放（默认true）
- *  isLooping        是否循环切换（默认true）
- *  type             插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
- *  animateType      动画类型，暂时只支持‘default’（默认default）
- *  duration         切换间隔时间（默认2000毫秒）
- *  onslidestart     触摸开始时回调函数
- *  onslidemove      触摸移动过程中回调函数
- *  onslideend       触摸结束后回调函数
- *  onslidechange    焦点图切换前的回调函数
+ *  dom              elementObj，对应的容器dom（必填）
+ *  data             array，插入的数据，格式如上面的imgList数组（必填）
+ *  isAutoplay       boolean，是否自动播放（默认true）
+ *  isLooping        boolean，是否循环切换（默认true）
+ *  isVertical       boolean，是否垂直播放（默认false）
+ *  type             string，插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
+ *  animateType      string，动画类型，暂时只支持‘default’（默认default）
+ *  duration         number，切换间隔时间（默认2000毫秒）
+ *  onslidestart     function，触摸开始时回调函数
+ *  onslidemove      function，触摸移动过程中回调函数
+ *  onslideend       function，触摸结束后回调函数
+ *  onslidechange    function，焦点图切换前的回调函数
+ *  destroy          function，销毁对象内存回收
  */
 
 (function (root, factory) {
