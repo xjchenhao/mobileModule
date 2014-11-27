@@ -17,6 +17,7 @@
             top: 50px !important;
             bottom: 50px !important;
             height: auto !important;
+            -webkit-overflow-scrolling: touch;
             overflow-scrolling: touch;
             overflow-y: auto;
         }
@@ -26,6 +27,34 @@
 <header>我是头部</header>
 <main id="page">
     <ul>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
+        <li>我是文章标题</li>
         <li>我是文章标题</li>
         <li>我是文章标题</li>
         <li>我是文章标题</li>
@@ -69,18 +98,20 @@
             box: document.getElementById('page'),
             con: document.querySelector('#page ul'),
             callback: function () {
+                var isLoging = false;
                 $.ajax({
                     url: "./ajax/list.json",
                     type: "post",
                     dataType: "json",
+                    async: false,
                     success: function (data) {
-                        setTimeout(function () {
-                            var tpl = document.getElementById('pageDate').innerHTML;
-                            var myTemplate = Handlebars.compile(tpl);
-                            document.querySelector('#page ul').innerHTML += myTemplate(data);
-                        }, 500);
+                        var tpl = document.getElementById('pageDate').innerHTML;
+                        var myTemplate = Handlebars.compile(tpl);
+                        document.querySelector('#page ul').innerHTML += myTemplate(data);
+                        isLoging = true;
                     }
                 });
+                return isLoging;
             }
         });
 //        infinite.destroy();
