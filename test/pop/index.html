@@ -7,6 +7,7 @@
     <title>弹框模块</title>
     <style>
         * { margin: 0; padding: 0; list-style: none; }
+        ul{ margin:30px;line-height:200%}
         #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color: rgba(0, 0, 0, 0.1) }
         #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; padding: 10px; min-width: 100px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px }
         #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red; border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
@@ -51,7 +52,7 @@
     seajs.use(["module/pop.js"], function (Pop) {
         alertBtn.onclick = function () {
             var pop = new Pop({
-                content: '我是内容'
+                content: '我是alert'
             });
         };
     });
