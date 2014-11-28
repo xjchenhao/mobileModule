@@ -20,9 +20,6 @@
             $ = root.$ || root.jQuery || root.Zepto;
         this.type = opts.type || 'alert';
         this.content = opts.content;
-        this.additional = opts.additional || '';
-        this.width = opts.width || 'auto';
-        this.height = opts.height || 'auto';
         this.callback = opts.callback || '';
         /*样式*/
         this.class = {
@@ -43,8 +40,14 @@
                     closeBtn = document.querySelector(self.class.close),    //关闭按钮
                     maskLayer = document.querySelector(self.class.mask);    //遮罩层
                 closeBtn && closeBtn.removeEventListener(self.touch.tap, self.event.close, false);
-                box.remove();
-                maskLayer.remove();
+                box.classList.add(self.class.out.slice(1));
+                function destroy() {
+                    box.removeEventListener('webkitAnimationEnd', destroy);
+                    box.remove();
+                    maskLayer.remove();
+                }
+
+                box.addEventListener('webkitAnimationEnd', destroy);
             },
             addDomMask: function () {
                 var maskLayer = document.createElement('div');
@@ -108,6 +111,7 @@
                 closeBtn = self.event.addDomCloseBtn();
                 box.style['padding'] = '10px';
                 box.getElementsByClassName('content')[0].innerHTML = this.content;
+                box.classList.add(self.class.inio.slice(1));
                 closeBtn.addEventListener(self.touch.tap, self.event.close, false);
                 break;
             case 'loading' :
@@ -117,13 +121,15 @@
                 box.style['font'] = '0/0 a';
                 box.getElementsByClassName('content')[0].style.cssText = 'text-align:center;line-height:' + box.clientHeight + 'px';
                 box.getElementsByTagName('img')[0].style['vertical-align'] = 'middle';
+                box.classList.add(self.class.inio.slice(1));
                 this.callback() && self.event.close();
                 break;
             case 'pop' :
                 maskLayer = self.event.addDomMask();
                 box = self.event.addDomBox();
-                box.style['background-color'] = 'initial';
+                box.style.cssText = 'background-color:initial;max-width:initial';
                 box.getElementsByClassName('content')[0].innerHTML = this.content;
+                box.classList.add(self.class.inio.slice(1));
                 break;
             default :
                 throw new Error("不支持的类型!");
@@ -134,7 +140,7 @@
         box.style['margin-left'] = -boxWidth / 2 + 'px';
         box.style['margin-top'] = -boxHeight / 2 + 'px';
         /*执行追加函数*/
-        this.additional && this.additional();
+        this.callback && this.callback();
     };
     Pop.prototype.close = function () {
         this.event.close();

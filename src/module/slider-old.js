@@ -177,11 +177,11 @@
             elm.slideBox.addEventListener('touchend', slide.eventTouch.end, false);
         };
         this.destroy = function () {
-            elm.btnBack.removeEveclicktener('touchend', slide.eventBack, false);
-            elm.btnNext.removeEveclicktener('touchend', slide.eventNext, false);
-            elm.slideBox.removeEveclicktener('touchstart', slide.eventTouch.start, false);
-            elm.slideBox.removeEveclicktener('touchend', slide.eventTouch.end, false);
-            elm.slideBox.removeEveclicktener('webkitTransitionEnd', slide.transitionCallback);
+            elm.btnBack.removeEventListener('touchend', slide.eventBack, false);
+            elm.btnNext.removeEventListener('touchend', slide.eventNext, false);
+            elm.slideBox.removeEventListener('touchstart', slide.eventTouch.start, false);
+            elm.slideBox.removeEventListener('touchend', slide.eventTouch.end, false);
+            elm.slideBox.removeEventListener('webkitTransitionEnd', slide.transitionCallback);
             clearInterval(slide.cleanAuto);
             o = elm = _self = slide = null;
         };
