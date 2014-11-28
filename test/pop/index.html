@@ -7,9 +7,9 @@
     <title>弹框模块</title>
     <style>
         * { margin: 0; padding: 0; list-style: none; }
-        ul{ margin:30px;line-height:200%}
+        ul { margin: 30px; line-height: 200% }
         #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color: rgba(0, 0, 0, 0.1) }
-        #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; padding: 10px; min-width: 100px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px }
+        #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px }
         #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red; border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
         #pop-close:after {
             content: '';
@@ -42,9 +42,9 @@
     <li><a href="javascript:;" id="popBtn">pop</a></li>
 </ul>
 <!--<div id="pop-content">-->
-    <!--<div class="content">-->
-    <!--</div>-->
-    <!--<a href="javascript:;" id="pop-close"></a>-->
+<!--<div class="content">-->
+<!--</div>-->
+<!--<a href="javascript:;" id="pop-close"></a>-->
 <!--</div>-->
 <!--<div id="pop-mask" style="display: none;"></div>-->
 <script src="../../src/sea.js"></script>
@@ -55,6 +55,29 @@
                 content: '我是alert'
             });
         };
+        loadingBtn.onclick = function () {
+            var pop = new Pop({
+                type: 'loading',
+                content: '<img src="image/loading.gif" />',
+                callback: function () {
+                    return false;
+                }
+            });
+        };
+        popBtn.onclick=function(){
+            var sHtml='<a href="javascript:;" id="close">关闭</a>';
+            var pop = new Pop({
+                type: 'pop',
+                content: sHtml,
+                additional:function(){
+                    var self=this;
+                    document.getElementById('close').onclick=function(){
+                        console.log('123');
+                        self.close();
+                    }
+                }
+            });
+        }
     });
 </script>
 </body>
