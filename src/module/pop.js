@@ -1,3 +1,33 @@
+/**
+ * 模态框      1.0.0
+ * eg:
+ * #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color: rgba(0, 0, 0, 0.1) }
+ * #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;}
+ * #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red; border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
+ *
+ *
+ * var pop = new Pop({
+ *     type: 'loading',
+ *     content: '<img src="image/loading.gif" />',
+ *     callback: function () {
+ *         return false;
+ *     }
+ * });
+ * Ps:
+ *  type             string，模态框类别（默认alert）
+ *  content          string，填充内容，alert时填充提示文字、loading时填充loading图片，pop时内部填充的dom
+ *  callback         function，回调函数，alert时关闭时触发、loading回调函数返回true隐藏图层，pop时先挂载回调函数再显示dom
+ *  close            function，关闭弹框
+ *  destroy          function，销毁对象内存回收,其实和close函数是一样的。为了跟其他模块统一加上的
+ *  class            object，存放选择器和样式(用来创建选择器和添加样式，支持id和class选择器，不支持组合选择器)，默认值如下：
+ *           {
+ *                mask:'#pop-mask',     //遮罩层
+ *                con:'#pop-content',   //pop最外面的容器
+ *                close:'#pop-close',   //关闭按钮
+ *                inio: '.pop-inio',    //进入动画
+ *                out:'.pop-out'        //转出动画
+ *           }
+ */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (exports) {
@@ -42,6 +72,9 @@
                 closeBtn && closeBtn.removeEventListener(self.touch.tap, self.event.close, false);
                 box.classList.add(self.class.out.slice(1));
                 function destroy() {
+                    if (self.type === 'alert' && self.callback) {
+                        self.callback();
+                    }
                     box.removeEventListener('webkitAnimationEnd', destroy);
                     box.remove();
                     maskLayer.remove();
@@ -130,6 +163,7 @@
                 box.style.cssText = 'background-color:initial;max-width:initial';
                 box.getElementsByClassName('content')[0].innerHTML = this.content;
                 box.classList.add(self.class.inio.slice(1));
+                this.callback && this.callback();
                 break;
             default :
                 throw new Error("不支持的类型!");
@@ -139,10 +173,11 @@
         boxWidth = box.clientWidth;
         box.style['margin-left'] = -boxWidth / 2 + 'px';
         box.style['margin-top'] = -boxHeight / 2 + 'px';
-        /*执行追加函数*/
-        this.callback && this.callback();
     };
     Pop.prototype.close = function () {
+        this.event.close();
+    };
+    Pop.prototype.destroy = function () {
         this.event.close();
     };
     return Pop;
