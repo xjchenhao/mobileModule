@@ -1,9 +1,12 @@
 /**
- * 模态框      1.0.0
+ * 模态框      1.0.1
  * eg:
- * #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color: rgba(0, 0, 0, 0.1) }
- * #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;}
- * #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red; border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
+ * #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color:
+ * rgba(0, 0, 0, 0.1) }
+ * #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width:
+ * 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;}
+ * #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red;
+ * border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
  *
  *
  * var pop = new Pop({
@@ -13,9 +16,11 @@
  *         return false;
  *     }
  * });
+ * pop.pop();       //前面只是创建类，要用pop()方法执行
  * Ps:
  *  type             string，模态框类别（默认alert）
  *  content          string，填充内容，alert时填充提示文字、loading时填充loading图片，pop时内部填充的dom
+ *  pop              function，弹出pop框，可传入string字符串修改pop内容
  *  callback         function，回调函数，alert时关闭时触发、loading回调函数返回true隐藏图层，pop时先挂载回调函数再显示dom
  *  close            function，关闭弹框
  *  destroy          function，销毁对象内存回收,其实和close函数是一样的。为了跟其他模块统一加上的
@@ -41,7 +46,6 @@
     var Pop = function (opts) {
         this._opts = opts;
         this._setting();
-        this._pop();
     };
     /*初始设置*/
     Pop.prototype._setting = function () {
@@ -66,11 +70,18 @@
         /*事件集合*/
         this.event = {
             close: function () {
-                var box = document.querySelector(self.class.con),           //pop容器
+                var box = document.querySelectorAll(self.class.con),           //pop容器
                     closeBtn = document.querySelector(self.class.close),    //关闭按钮
                     maskLayer = document.querySelector(self.class.mask);    //遮罩层
                 closeBtn && closeBtn.removeEventListener(self.touch.tap, self.event.close, false);
-                box.classList.add(self.class.out.slice(1));
+                if(box.length===0){
+                    return;
+                }else if(box.length>0){
+                    box[0].remove();
+                    maskLayer.remove();
+                    return;
+                }
+                box[0].classList.add(self.class.out.slice(1));
                 function destroy() {
                     if (self.type === 'alert' && self.callback) {
                         self.callback();
@@ -112,7 +123,7 @@
                 return box;
             },
             addDomCloseBtn: function () {
-                var box = document.querySelector(self.class.con);           //pop容器
+                var box = document.querySelectorAll(self.class.con);           //pop容器
                 var closeBtn = document.createElement('a');
                 closeBtn.setAttribute('href', 'javascript:;');
                 switch (self.class.close.slice(0, 1)) {
@@ -123,19 +134,20 @@
                         closeBtn.setAttribute('id', self.class.close.slice(1));
                         break;
                 }
-                box.appendChild(closeBtn);
+                box[box.length-1].appendChild(closeBtn);
                 return closeBtn;
             }
         };
     };
     /*主逻辑*/
-    Pop.prototype._pop = function () {
+    Pop.prototype.pop = function (popVal) {
         var self = this,
             box = null,          //pop容器
             maskLayer = null,    //遮罩层
             closeBtn = null,     //关闭按钮
             boxHeight = 0,
             boxWidth = 0;
+        this.event.close();
         /*分类执行*/
         switch (this.type) {
             case 'alert' :
@@ -143,14 +155,14 @@
                 box = self.event.addDomBox();
                 closeBtn = self.event.addDomCloseBtn();
                 box.style['padding'] = '10px';
-                box.getElementsByClassName('content')[0].innerHTML = this.content;
+                box.getElementsByClassName('content')[0].innerHTML = popVal || this.content;
                 box.classList.add(self.class.inio.slice(1));
                 closeBtn.addEventListener(self.touch.tap, self.event.close, false);
                 break;
             case 'loading' :
                 maskLayer = self.event.addDomMask();
                 box = self.event.addDomBox();
-                box.getElementsByClassName('content')[0].innerHTML = this.content;
+                box.getElementsByClassName('content')[0].innerHTML = popVal || this.content;
                 box.style['font'] = '0/0 a';
                 box.getElementsByClassName('content')[0].style.cssText = 'text-align:center;line-height:' + box.clientHeight + 'px';
                 box.getElementsByTagName('img')[0].style['vertical-align'] = 'middle';
@@ -161,7 +173,7 @@
                 maskLayer = self.event.addDomMask();
                 box = self.event.addDomBox();
                 box.style.cssText = 'background-color:initial;max-width:initial';
-                box.getElementsByClassName('content')[0].innerHTML = this.content;
+                box.getElementsByClassName('content')[0].innerHTML = popVal || this.content;
                 box.classList.add(self.class.inio.slice(1));
                 this.callback && this.callback();
                 break;
@@ -174,11 +186,9 @@
         box.style['margin-left'] = -boxWidth / 2 + 'px';
         box.style['margin-top'] = -boxHeight / 2 + 'px';
     };
-    Pop.prototype.close = function () {
-        this.event.close();
-    };
-    Pop.prototype.destroy = function () {
-        this.event.close();
-    };
+    Pop.prototype.close = Pop.prototype.destroy =
+        function () {
+            this.event.close();
+        };
     return Pop;
 });

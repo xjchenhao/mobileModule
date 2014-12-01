@@ -125,18 +125,20 @@
 <script>
     seajs.use(["module/pop.js"], function (Pop) {
         alertBtn.onclick = function () {
-            var pop = new Pop({
+            var alertPop = new Pop({
                 content: '我是alert'
             });
+            alertPop.pop();
         };
         loadingBtn.onclick = function () {
-            var pop = new Pop({
+            var loading = new Pop({
                 type: 'loading',
                 content: '<img src="image/loading.gif" />',
                 callback: function () {
                     return false;
                 }
             });
+            loading.pop();
         };
         popBtn.onclick=function(){
             var sHtml='<a href="javascript:;" id="close" style="display: inline-block;width: 200px;height: 200px;line-height: 200px;text-align: center;background-color:#fff">关闭</a>';
@@ -150,6 +152,7 @@
                     }
                 }
             });
+            pop.pop();
         }
     });
 </script>
