@@ -22,3 +22,4 @@
 1. slider轮播图
 2. infinite滚动到底部执行回调
 3. scroll-imgload滚动图片加载
+4. pop模态框，模拟各种常见弹出框
