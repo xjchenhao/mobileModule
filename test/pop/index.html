@@ -5,11 +5,12 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
     <title>弹框模块</title>
+    <link rel="stylesheet" href="style/animate.css"/>
     <style>
         * { margin: 0; padding: 0; list-style: none; }
         ul { margin: 30px; line-height: 200% }
         #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color: rgba(0, 0, 0, 0.1) }
-        #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;}
+        #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width: 200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;-webkit-animation-duration: .3s;animation-duration: .3s;}
         #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red; border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
         #pop-close:after {
             content: '';
@@ -32,80 +33,6 @@
             height: 10px;
             background-color: #fff;
             margin: -5px 0 0 -1px;
-        }
-        @-webkit-keyframes zoomIn {
-            0% {
-                opacity: 0;
-                -webkit-transform: scale3d(.3,.3,.3);
-                transform: scale3d(.3,.3,.3)
-            }
-
-            50% {
-                opacity: 1
-            }
-        }
-
-        @keyframes zoomIn {
-            0% {
-                opacity: 0;
-                -webkit-transform: scale3d(.3,.3,.3);
-                -ms-transform: scale3d(.3,.3,.3);
-                transform: scale3d(.3,.3,.3)
-            }
-
-            50% {
-                opacity: 1
-            }
-        }
-
-        .pop-inio {
-            -webkit-animation-duration: .1s;
-            animation-duration: .1s;
-            -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
-            -webkit-animation-name: zoomIn;
-            animation-name: zoomIn
-        }
-        @-webkit-keyframes zoomOut {
-            0% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: 0;
-                -webkit-transform: scale3d(.3,.3,.3);
-                transform: scale3d(.3,.3,.3)
-            }
-
-            100% {
-                opacity: 0
-            }
-        }
-
-        @keyframes zoomOut {
-            0% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: 0;
-                -webkit-transform: scale3d(.3,.3,.3);
-                -ms-transform: scale3d(.3,.3,.3);
-                transform: scale3d(.3,.3,.3)
-            }
-
-            100% {
-                opacity: 0
-            }
-        }
-
-        .pop-out {
-            -webkit-animation-duration: .1s;
-            animation-duration: .1s;
-            -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
-            -webkit-animation-name: zoomOut;
-            animation-name: zoomOut
         }
     </style>
 </head>
