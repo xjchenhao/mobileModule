@@ -42,8 +42,8 @@
         ];
         var imgLength = imgList.length,
                 slideBox = document.getElementById('slideBox'),
-                noneOl = {},
-                nodeLi = {};
+                noneOl = null,
+                nodeLi = null;
         if (imgLength > 1) {
             noneOl = document.createElement("ol");
             slideBox.appendChild(noneOl);
@@ -62,7 +62,7 @@
             isVertical: false,
             onslidechange: function (page) {
                 var liList = slideBox.querySelectorAll('li'),
-                    liLength = liList.length;
+                        liLength = liList.length;
                 for (var i = 0; i < liLength; i++) {
                     liList[i].classList.remove('on');
                 }
