@@ -1,5 +1,5 @@
 /**
- * slider焦点图      1.0.3
+ * slider焦点图      1.0.4
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
@@ -265,7 +265,7 @@
         };
         this.event = {
             start: function (evt) {
-                evt.preventDefault();
+                //evt.preventDefault();
                 self.pause();
                 isMoving = true;
                 self.callback.onslidestart && self.callback.onslidestart();
@@ -276,11 +276,14 @@
             },
             move: function (evt) {
                 if (isMoving) {
-                    evt.preventDefault();
+                    //evt.preventDefault();
                     self.onslide && self.onslide();
                     var axis = self.axis,
                         currentPoint = self.touch.hasTouch ? evt.targetTouches[0]['page' + axis] : evt['page' + axis],
                         offset = currentPoint - self['start' + axis];
+                    if (Math.abs(offset) < 10) {
+                        return;
+                    }
                     /*根据offset，位置调整*/
                     for (var i = 0; i < 3; i++) {
                         var item = self.els[i];
@@ -292,7 +295,7 @@
                 }
             },
             end: function (evt) {
-                evt.preventDefault();
+                //evt.preventDefault();
                 isMoving = false;
                 var boundary = self.scale / 2,                               //切换的临界值
                     metric = self.offset,                                    //获取偏移量
