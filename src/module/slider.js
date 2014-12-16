@@ -1,5 +1,5 @@
 /**
- * slider焦点图      1.0.2
+ * slider焦点图      1.0.3
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
@@ -26,6 +26,7 @@
  *     isAutoplay: true,
  *     isLooping: false,
  *     isVertical:false,
+ *     isAutoScale:true,
  *     type: 'pic',
  *     animateType:'default',
  *     duration:3000,
@@ -42,7 +43,7 @@
  *  isAutoplay       boolean，是否自动播放（默认true）
  *  isLooping        boolean，是否循环切换（默认true）
  *  isVertical       boolean，是否垂直播放（默认false）
- *  autoScale        boolean，是否开启自动保持图片比例（默认true）
+ *  isAutoScale        boolean，是否开启自动保持图片比例（默认false）
  *  type             string，插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
  *  animateType      string，动画类型，暂时只支持‘default’（默认default）
  *  duration         number，切换间隔时间（默认2000毫秒）
@@ -84,7 +85,7 @@
         this.wrap = opts.dom;                            //容器
         this.data = opts.data;                           //数据
         this.type = opts.type || 'pic';                  //焦点图类型
-        this.autoScale=true;                            //智能调整图片宽高比例
+        this.isAutoScale = opts.isAutoScale || false;   //智能调整图片宽高比例
         this.isVertical = opts.isVertical || false;     //是否垂直
         this.duration = opts.duration || 2000;           //自动滑动时的间隔时间(毫秒)
         this.axis = this.isVertical ? 'Y' : 'X';        //方向
@@ -170,12 +171,12 @@
             return '';
         }
         if (this.type === 'pic') {
-            if(this.autoScale){
+            if (this.isAutoScale) {
                 html = item.height / item.width > this.ratio
                     ? '<img height="' + this.height + '" src="' + item.content + '">'
                     : '<img width="' + this.width + '" src="' + item.content + '">';
-            }else{
-                html='<img src="' + item.content + '">';
+            } else {
+                html = '<img src="' + item.content + '">';
             }
         } else if (this.type = 'dom') {
             html = '<div style="height:' + item.height + ';width:' + item.width + ';">' + item.content + '</div>';
