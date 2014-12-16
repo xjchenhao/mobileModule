@@ -42,6 +42,7 @@
  *  isAutoplay       boolean，是否自动播放（默认true）
  *  isLooping        boolean，是否循环切换（默认true）
  *  isVertical       boolean，是否垂直播放（默认false）
+ *  autoScale        boolean，是否开启自动保持图片比例（默认true）
  *  type             string，插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
  *  animateType      string，动画类型，暂时只支持‘default’（默认default）
  *  duration         number，切换间隔时间（默认2000毫秒）
