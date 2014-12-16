@@ -1,5 +1,5 @@
 /**
- * slider焦点图      1.0.1
+ * slider焦点图      1.0.2
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
@@ -83,6 +83,7 @@
         this.wrap = opts.dom;                            //容器
         this.data = opts.data;                           //数据
         this.type = opts.type || 'pic';                  //焦点图类型
+        this.autoScale=true;                            //智能调整图片宽高比例
         this.isVertical = opts.isVertical || false;     //是否垂直
         this.duration = opts.duration || 2000;           //自动滑动时的间隔时间(毫秒)
         this.axis = this.isVertical ? 'Y' : 'X';        //方向
@@ -168,9 +169,13 @@
             return '';
         }
         if (this.type === 'pic') {
-            html = item.height / item.width > this.ratio
-                ? '<img height="' + this.height + '" src="' + item.content + '">'
-                : '<img width="' + this.width + '" src="' + item.content + '">';
+            if(this.autoScale){
+                html = item.height / item.width > this.ratio
+                    ? '<img height="' + this.height + '" src="' + item.content + '">'
+                    : '<img width="' + this.width + '" src="' + item.content + '">';
+            }else{
+                html='<img src="' + item.content + '">';
+            }
         } else if (this.type = 'dom') {
             html = '<div style="height:' + item.height + ';width:' + item.width + ';">' + item.content + '</div>';
         } else if (this.type === 'overspread') {
