@@ -40,34 +40,37 @@
 //                content: "<img height='100%' width='100%' src='image/img3.jpg' />"
             }
         ];
-        var imgLength = imgList.length,
-                slideBox = document.getElementById('slideBox'),
-                noneOl = null,
-                nodeLi = null;
-        if (imgLength > 1) {
-            noneOl = document.createElement("ol");
-            slideBox.appendChild(noneOl);
-            for (var i = 0; i < imgLength; i++) {
-                nodeLi = document.createElement("li");
-                nodeLi.appendChild(document.createTextNode(i));
-                noneOl.appendChild(nodeLi);
-            }
-        }
         var slide = new Slider({
             dom: slideBox,
             data: imgList,
             isAutoplay: true,
             isLooping: true,
-            isAutoScale:true,
+            isAutoScale: true,
             type: 'pic',
             isVertical: false,
-            onslidechange: function (page) {
-                var liList = slideBox.querySelectorAll('li'),
+            onSlideChange: function (page) {
+                var liList = document.getElementById('slideBox').querySelectorAll('li'),
                         liLength = liList.length;
                 for (var i = 0; i < liLength; i++) {
                     liList[i].classList.remove('on');
                 }
                 liList[page].classList.add('on');
+            },
+            onSlideInto: function () {
+                var imgLength = imgList.length,
+                        slideBox = document.getElementById('slideBox'),
+                        nodeOl = null,
+                        nodeLi = null;
+                if (imgLength > 1) {
+                    nodeOl = document.createElement("ol");
+                    slideBox.appendChild(nodeOl);
+                    for (var i = 0; i < imgLength; i++) {
+                        nodeLi = document.createElement("li");
+                        nodeLi.appendChild(document.createTextNode(i + 1));
+                        nodeOl.appendChild(nodeLi);
+                    }
+                    nodeOl.querySelectorAll('li')[0].classList.add('on');
+                }
             }
         });
         /*删除模块、内存回收*/

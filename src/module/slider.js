@@ -1,5 +1,5 @@
 /**
- * slider焦点图      1.0.4
+ * slider焦点图      1.1.0
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
@@ -26,14 +26,15 @@
  *     isAutoplay: true,
  *     isLooping: false,
  *     isVertical:false,
- *     isAutoScale:true,
+ *     isAutoScale:false,
+ *     isDestroyCon:false,
  *     type: 'pic',
  *     animateType:'default',
  *     duration:3000,
- *     onslidestart:function(){},
- *     onslidemove:function(){},
- *     onslideend:function(){},
- *     onslidechange: function (page) {
+ *     onTouchStart:function(){},
+ *     onTouchMove:function(){},
+ *     onTouchEnd:function(){},
+ *     onSlideChange: function (page) {
  *         console.log(page); //回调页码
  *    }
  * });
@@ -43,14 +44,17 @@
  *  isAutoplay       boolean，是否自动播放（默认true）
  *  isLooping        boolean，是否循环切换（默认true）
  *  isVertical       boolean，是否垂直播放（默认false）
- *  isAutoScale        boolean，是否开启自动保持图片比例（默认false）
+ *  isAutoScale      boolean，是否开启自动保持图片比例（默认false）
+ *  isDestroyCon     boolean，销毁时是否销毁内容（默认false）
  *  type             string，插入类型，支持‘pic’、‘dom’、‘overspread’（默认pic）
  *  animateType      string，动画类型，暂时只支持‘default’（默认default）
  *  duration         number，切换间隔时间（默认2000毫秒）
- *  onslidestart     function，触摸开始时回调函数
- *  onslidemove      function，触摸移动过程中回调函数
- *  onslideend       function，触摸结束后回调函数
- *  onslidechange    function，焦点图切换前的回调函数
+ *  onSlideInto      function，焦点图初始化时
+ *  onSlideChange    function，焦点图切换前的回调函数
+ *  onDestroy        function，销毁时回调函数
+ *  onTouchStart     function，触摸开始时回调函数
+ *  onTouchMove      function，触摸移动过程中回调函数
+ *  onTouchEnd       function，触摸结束后回调函数
  *  destroy          function，销毁对象内存回收
  */
 
@@ -85,8 +89,9 @@
         this.wrap = opts.dom;                            //容器
         this.data = opts.data;                           //数据
         this.type = opts.type || 'pic';                  //焦点图类型
-        this.isAutoScale = opts.isAutoScale || false;   //智能调整图片宽高比例
+        this.isAutoScale = opts.isAutoScale || false;   //是否智能调整图片宽高比例
         this.isVertical = opts.isVertical || false;     //是否垂直
+        this.isDestroyCon = opts.isDestroyCon || false; //销毁时是否清空内容
         this.duration = opts.duration || 2000;           //自动滑动时的间隔时间(毫秒)
         this.axis = this.isVertical ? 'Y' : 'X';        //方向
 
@@ -99,10 +104,12 @@
 
         /*回调函数*/
         this.callback = {
-            onslidestart: opts.onslidestart,      //触摸开始时
-            onslideend: opts.onslideend,          //触摸结束时
-            onslidemove: opts.onslidemove,        //触摸滑动过程中
-            onslidechange: opts.onslidechange     //切换前
+            onTouchStart: opts.onTouchStart,      //触摸开始时
+            onTouchEnd: opts.onTouchEnd,          //触摸结束时
+            onTouchMove: opts.onTouchMove,        //触摸滑动过程中
+            onSlideChange: opts.onSlideChange,    //切换前
+            onSlideInto: opts.onSlideInto,        //初始化时
+            onDestroy: opts.onDestroy             //销毁后
         };
 
         /*数量决定是否切换*/
@@ -120,10 +127,17 @@
         }
         /*动画类型*/
         this._animateFunc = (opts.animateType in this._animateFuncs) ? this._animateFuncs[opts.animateType] : this._animateFuncs['default'];
+        /*初始化回调*/
+        this.callback.onSlideInto && this.callback.onSlideInto();
     };
     /*生成图片列表*/
     Slider.prototype._renderHTML = function () {
         var outer, i, li;
+        if(!this.isDestroyCon){
+            if(this.wrap.getElementsByTagName('ul')[0]){
+                this.wrap.removeChild(this.wrap.getElementsByTagName('ul')[0]);
+            }
+        }
         /*生成或获取ul节点*/
         if (this.outer) {
             this.outer.innerHTML = '';
@@ -231,7 +245,7 @@
                 sEle.style.visibility = 'visible';
             }, 200);
 
-            this.callback.onslidechange && this.callback.onslidechange(this.sliderIndex);
+            this.callback.onSlideChange && this.callback.onSlideChange(this.sliderIndex);
         }
 
         /*li通过样式置换顺序*/
@@ -265,10 +279,10 @@
         };
         this.event = {
             start: function (evt) {
-                //evt.preventDefault();
+                evt.preventDefault();
                 self.pause();
                 isMoving = true;
-                self.callback.onslidestart && self.callback.onslidestart();
+                self.callback.onTouchStart && self.callback.onTouchStart();
                 /*记录开始时间和坐标*/
                 self.startTime = new Date().getTime();
                 self.startX = self.touch.hasTouch ? evt.targetTouches[0].pageX : evt.pageX;
@@ -276,26 +290,26 @@
             },
             move: function (evt) {
                 if (isMoving) {
-                    //evt.preventDefault();
+                    evt.preventDefault();
                     self.onslide && self.onslide();
                     var axis = self.axis,
                         currentPoint = self.touch.hasTouch ? evt.targetTouches[0]['page' + axis] : evt['page' + axis],
                         offset = currentPoint - self['start' + axis];
-                    if (Math.abs(offset) < 10) {
-                        return;
-                    }
+                    //if (Math.abs(offset) < 100) {
+                    //    return;
+                    //}
                     /*根据offset，位置调整*/
                     for (var i = 0; i < 3; i++) {
                         var item = self.els[i];
                         item.style.webkitTransition = 'all 0s';
                         self._animateFunc(item, axis, self.scale, i, offset);
                     }
-                    self.callback.onslidemove && self.callback.onslidemove();
+                    self.callback.onTouchMove && self.callback.onTouchMove();
                     self.offset = offset;       //记录偏移量
                 }
             },
             end: function (evt) {
-                //evt.preventDefault();
+                evt.preventDefault();
                 isMoving = false;
                 var boundary = self.scale / 2,                               //切换的临界值
                     metric = self.offset,                                    //获取偏移量
@@ -312,7 +326,7 @@
                 }
                 self.isAutoplay && self.play();             //开启自动播放
                 self.offset = 0;                            //偏移量归零
-                self.callback.onslideend && self.callback.onslideend();
+                self.callback.onTouchEnd && self.callback.onTouchEnd();
             },
             orientation: function (evt) {
                 setTimeout(function () {
@@ -368,7 +382,8 @@
         window.removeEventListener('focus', self.event.focus, false);
         window.removeEventListener('blur', self.event.blur, false);
         window.removeEventListener(self.touch.sizeEvt, self.event.orientation);
-        this.wrap.innerHTML = '';
+        this.callback.onDestroy && this.callback.onDestroy();
+        this.isDestroyCon && (this.wrap.innerHTML = '');
     };
     return Slider;
 });
