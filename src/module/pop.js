@@ -1,9 +1,9 @@
 /**
- * 模态框      1.0.2
+ * 模态框      1.0.3
  * eg:
  * #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color:
  * rgba(0, 0, 0, 0.1) }
- * #pop-content { position: absolute; left: 50%; top: 50%; z-index: 1001; min-width: 50px; min-height: 50px; max-width:200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;-webkit-animation-duration: .3s;animation-duration: .3s;}
+ * #pop-content { position: absolute; left: 50%; top: 50%;transform: translate(-50%, -50%);  z-index: 1001; min-width: 50px; min-height: 50px; max-width:200px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px;-webkit-animation-duration: .3s;animation-duration: .3s;}
  * #pop-close { position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background-color: red;
  * border-radius: 100%; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
  *
@@ -188,8 +188,6 @@
         /*居中对齐*/
         boxHeight = box.clientHeight;
         boxWidth = box.clientWidth;
-        box.style['margin-left'] = -boxWidth / 2 + 'px';
-        box.style['margin-top'] = -boxHeight / 2 + 'px';
     };
     Pop.prototype.close = Pop.prototype.destroy =
         function () {
