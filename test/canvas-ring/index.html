@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .per{position:absolute;top:-3rem;left:-3rem;-webkit-transform: scale(.5,.5);transform: scale(.5,.5);}
+        .per{display:block;overflow:hidden;width:16rem;height:16rem;-webkit-border-radius:100%;border-radius:100%;}
+        .per canvas{position:absolute;z-index:-1;width:16rem;height:16rem;}
+        .per .val{position:absolute;z-index:10;top:1rem;left:1rem;width:14rem;height:14rem;color:#ff5f5f;-webkit-border-radius:100%;border-radius:100%;background-color:#fff;font-size:5rem;line-height:14rem;text-align:center;}
+    </style>
+</head>
+<body>
+<div class="per">
+    <canvas id="canvas"></canvas>
+    <div class="val">
+        <span>80</span>%
+    </div>
+</div>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use("module/canvas-ring.js", function (Ring) {
+        var oRing=new Ring({
+            size:document.getElementsByClassName('per')[0].clientWidth, //画布大小（正方形）
+            step:10,                 //动画步长
+            delay:0,                //动画延迟开始
+            before:'',              //前置的回调接口
+            after:''                //后置的回调接口
+        });
+        oRing.run({
+            obj:document.getElementById('canvas'),  //画布对象
+            percent:0.8,         //进度条占比
+            perColor:'#ffd6d6',  //进度的颜色
+            bgColor:'#ff5f5f',   //背景的颜色
+            isAnimation:true   //是否动画
+        })
+    });
+</script>
+</body>
+</html>
