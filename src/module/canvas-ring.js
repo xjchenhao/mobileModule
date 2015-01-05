@@ -1,5 +1,5 @@
 /**
- * canvas-ring圆环进度条      1.0.0
+ * canvas-ring圆环进度条      1.0.1
  * eg:
  * .per{position:absolute;top:-3rem;left:-3rem;-webkit-transform: scale(.5,.5);transform: scale(.5,.5);}
  * .per{display:block;overflow:hidden;width:16rem;height:16rem;-webkit-border-radius:100%;border-radius:100%;}
@@ -52,7 +52,7 @@
         /*初始化user data*/
         this.size=opts.size||200;                   //画布大小（正方形）
         this.step = opts.step || 5;                 //动画步长
-        this.delay = opts.delay || 10;              //动画延迟开始
+        this.delay = opts.delay || 0;               //动画延迟开始
         this.before = opts.onBefore || noop;        //前置的回调接口
         this.after = opts.onAfter || noop;          //后置的回调接口
     };
@@ -83,19 +83,23 @@
                         ctx.moveTo(self.size/2, self.size/2);
                         ctx.arc(self.size/2, self.size/2, self.size/2, sRage, Math.PI * 2 * (i/360)+sRage);
                         ctx.fill();
-                        setTimeout(djs, self.delay);
+                        setTimeout(djs, 10);
                     } else {
                         //后置的回调接口
                         self.after(ctx);
                     }
                 };
-                djs();
+                if(self.delay){
+                    setTimeout(djs,self.delay);
+                }else{
+                    djs();
+                }
             }else{
                 ctx.beginPath();
                 ctx.moveTo(self.size/2, self.size/2);
                 ctx.arc(self.size/2, self.size/2, self.size/2, sRage, Math.PI * 2 * (rage/360)+sRage);
                 ctx.fill();
-                setTimeout(djs, self.delay);
+                setTimeout(djs, 10);
             }
         }
     };
