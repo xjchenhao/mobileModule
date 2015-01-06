@@ -44,7 +44,7 @@
             return factory(root, exports);
         });
     } else {
-        root.Slider = factory(root, {});
+        root.Infinite = factory(root, {});
     }
 })(this, function (root, slider) {
     var Infinite = function (opts) {

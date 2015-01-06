@@ -29,7 +29,7 @@
             return factory(root, exports);
         });
     } else {
-        root.Slider = factory(root, {});
+        root.ImgLoad = factory(root, {});
     }
 })(this, function (root, slider) {
     var ImgLoad = function (opts) {

@@ -39,7 +39,7 @@
             return factory(root, exports);
         });
     } else {
-        root.Slider = factory(root, {});
+        root.Ring = factory(root, {});
     }
 })(this, function (root, slider) {
     var Ring = function (opts) {

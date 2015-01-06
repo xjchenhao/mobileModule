@@ -40,7 +40,7 @@
             return factory(root, exports);
         });
     } else {
-        root.Slider = factory(root, {});
+        root.Pop = factory(root, {});
     }
 })(this, function (root, pop) {
     "use strict";
