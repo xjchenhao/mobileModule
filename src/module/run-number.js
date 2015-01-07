@@ -1,5 +1,5 @@
 /**
- * 数字跑动      1.0.0
+ * 数字跑动      1.0.1
  * eg:
  * <div id="number" data-val="43456.4433"></div>
  *
@@ -36,7 +36,7 @@
         this._setting();
     };
     runNumber.prototype._setting = function () {
-        var opts = this._opts;
+        var opts = this._opts || {};
 
         /*初始化user data*/
         this.step = opts.step || 19;          //分成几步完成
