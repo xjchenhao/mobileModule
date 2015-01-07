@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="number" data-val="43456.4433"></div>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use("module/run-number.js", function (runNumber) {
+        /*创建类&基础设置*/
+        var oRunNumber = new runNumber({
+            step: 19,          //分成几步完成
+            decimal: 3,       //保留小数点后几位（包含在span标签内）
+            speed: 50         //滚动速度
+        });
+        /*运行跑动*/
+        oRunNumber.run({
+            obj: document.getElementById('number')         //需要数字跑动的标签
+        });
+        /*销毁模块*/
+//        oRunNumber.destroy();
+//        oRunNumber='';
+    });
+</script>
+</body>
+</html>
