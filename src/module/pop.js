@@ -1,5 +1,5 @@
 /**
- * 模态框      1.0.4
+ * 模态框      1.0.5
  * eg:
  * #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color:
  * rgba(0, 0, 0, 0.1) }
@@ -21,7 +21,7 @@
  * Ps:
  *  type             string，模态框类别（默认alert）
  *  content          string，填充内容，alert时填充提示文字、loading时填充loading图片，pop时内部填充的dom
- *  pop(str,callback)              function，弹出pop框，可传入string字符串修改pop内容，传入callback替换新建类时的回调函数
+ *  pop(str,callback)function，弹出pop框，可传入string字符串修改pop内容，传入callback替换新建类时的回调函数
  *  callback         function，回调函数，alert时关闭时触发、loading回调函数返回true隐藏图层，pop时先挂载回调函数再显示dom
  *  close            function，关闭弹框
  *  destroy          function，销毁对象内存回收,其实和close函数是一样的。为了跟其他模块统一加上的
@@ -161,6 +161,11 @@
                 box.classList.add('animated');
                 box.classList.add(self.class.inio.slice(1));
                 closeBtn.addEventListener(self.touch.tap, self.event.close, false);
+                if(callback){
+                    callback();
+                }else{
+                    this.callback && this.callback();
+                }
                 break;
             case 'loading' :
                 maskLayer = self.event.addDomMask();
