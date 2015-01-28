@@ -1,5 +1,5 @@
 /**
- * 模态框      1.0.5
+ * 模态框      1.0.6
  * eg:
  * #pop-mask { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 1000; height: 100%; background-color:
  * rgba(0, 0, 0, 0.1) }
@@ -21,7 +21,7 @@
  * Ps:
  *  type             string，模态框类别（默认alert）
  *  content          string，填充内容，alert时填充提示文字、loading时填充loading图片，pop时内部填充的dom
- *  pop(str,callback)function，弹出pop框，可传入string字符串修改pop内容，传入callback替换新建类时的回调函数
+ *  pop(str,callback)              function，弹出pop框，可传入string字符串修改pop内容，传入callback替换新建类时的回调函数
  *  callback         function，回调函数，alert时关闭时触发、loading回调函数返回true隐藏图层，pop时先挂载回调函数再显示dom
  *  close            function，关闭弹框
  *  destroy          function，销毁对象内存回收,其实和close函数是一样的。为了跟其他模块统一加上的
@@ -75,10 +75,10 @@
                     closeBtn = document.querySelector(self.class.close),        //关闭按钮
                     maskLayer = document.querySelector(self.class.mask);        //遮罩层
                 closeBtn && closeBtn.removeEventListener(self.touch.tap, self.event.close, false);
-                if(force===true){
-                    if(box.length!==0){
-                        box[0].remove();
-                        maskLayer.remove();
+                if (force === true) {
+                    if (box.length !== 0) {
+                        box[0].parentNode.removeChild(box[0]);
+                        maskLayer.parentNode.removeChild(maskLayer);
                     }
                     return;
                 }
@@ -89,8 +89,8 @@
                         self.callback();
                     }
                     box[0].removeEventListener('webkitAnimationEnd', destroy);
-                    box[0].remove();
-                    maskLayer.remove();
+                    box[0].parentNode.removeChild(box[0]);
+                    maskLayer.parentNode.removeChild(maskLayer);
                 }
 
                 box[0].addEventListener('webkitAnimationEnd', destroy);
@@ -136,13 +136,13 @@
                         closeBtn.setAttribute('id', self.class.close.slice(1));
                         break;
                 }
-                box[box.length-1].appendChild(closeBtn);
+                box[box.length - 1].appendChild(closeBtn);
                 return closeBtn;
             }
         };
     };
     /*主逻辑*/
-    Pop.prototype.pop = function (str,callback) {
+    Pop.prototype.pop = function (str, callback) {
         var self = this,
             box = null,          //pop容器
             maskLayer = null,    //遮罩层
@@ -161,9 +161,9 @@
                 box.classList.add('animated');
                 box.classList.add(self.class.inio.slice(1));
                 closeBtn.addEventListener(self.touch.tap, self.event.close, false);
-                if(callback){
+                if (callback) {
                     callback();
-                }else{
+                } else {
                     this.callback && this.callback();
                 }
                 break;
@@ -185,9 +185,9 @@
                 box.getElementsByClassName('content')[0].innerHTML = str || this.content;
                 box.classList.add('animated');
                 box.classList.add(self.class.inio.slice(1));
-                if(callback){
+                if (callback) {
                     callback();
-                }else{
+                } else {
                     this.callback && this.callback();
                 }
                 break;
