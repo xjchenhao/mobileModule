@@ -8,16 +8,19 @@
     }
 })(this, function (root, slider) {
     var verifyfrom = function (formId, opts) {
-        if (!document.getElementById(formId)) {
-            throw new Error("请设置表单容器id!");
+        if (document.getElementById(formId)) {
+            this.formBox = document.getElementById(formId);
+        }else{
+            //throw new Error("请设置表单容器id!");
+            this.formBox = document;
         }
-        this.formBox = document.getElementById(formId);
         this._opts = opts;
         this._setting();
         this._bindHandler();
     };
     verifyfrom.prototype._setting = function () {
-        var opts = this._opts || {};
+        var pointer = this,
+            opts = pointer._opts || {};
 
         /*初始化user data*/
         this.isVerify = opts.isVerify || 'required'; 		    //需要校验的表单项
@@ -34,7 +37,7 @@
         if (opts.rule) {
             for (var i in opts.rule) {
                 for (var j in opts.rule[i]) {
-                    opts._rule[i][j] = opts.rule[i][j];
+                    pointer._rule[i][j] = opts.rule[i][j];
                 }
             }
         }
@@ -301,17 +304,17 @@
             input = pointer.formBox.getElementsByTagName('input');  //input表单列表
         for (var i = 0, iLength = input.length; i < iLength; i++) {
             input[i].onblur = function () {
-                if (pointer.hasAttr(this, pointer.isVerify)) {
+                if (pointer.eval(this, pointer.isVerify)) {
                     pointer.isRemoveVerify && pointer.verifyInput(this);
                 }
             }
         }
     };
-    verifyfrom.prototype.runVerify = function () {
+    verifyfrom.prototype.run = function () {
         var pointer = this,
             input = this.formBox.getElementsByTagName('input');
         for (var i = 0, iLength = input.length; i < iLength; i++) {
-            if (pointer.hasAttr(input[i], pointer.isVerify)) {
+            if (pointer.eval(input[i], pointer.isVerify)) {
                 if (!pointer.verifyInput(input[i])) {
                     return false;
                 }
@@ -319,10 +322,8 @@
         }
         return true;
     };
-    verifyfrom.prototype.hasAttr = function (obj, str) {
-        if (obj.getAttribute('required') === str || obj.getAttribute('required') === "") {
-            return true;
-        }
+    verifyfrom.prototype.eval = function (obj, str) {
+        return !!(new Function("return "+obj.getAttribute('data-required')))();
     };
     verifyfrom.prototype.correct = function (obj) {
         this.removeClass(obj,this.errorStyle);
@@ -387,13 +388,16 @@
         return len;
     };
     verifyfrom.prototype.destroy = function () {
-        var self = this;
-        self.box.removeEventListener('scroll', self.event.scroll, false);
+        //释放内存
     };
-    verifyfrom.verify=function(obj){
-        new this(obj);
+    return function(formId, opts){
+        //确保该函数作为构造函数被调用
+        if(!(this instanceof verifyfrom)){
+            return new verifyfrom(formId, opts);
+        }else{
+            return verifyfrom;
+        }
     };
-    return verifyfrom;
 
 
 
