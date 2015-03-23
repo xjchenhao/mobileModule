@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>资源预加载</title>
+</head>
+<body>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use("module/pre-loading.js", function (PreLoad) {
+        PreLoad({
+            resource:[
+                '../../src/module/slider.js'
+            ]
+        },function(){
+            alert('加载成功！');
+        });
+    });
+</script>
+</body>
+</html>
