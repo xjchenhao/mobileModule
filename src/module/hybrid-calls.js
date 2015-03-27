@@ -38,7 +38,7 @@
     window.Hybrid = {};
 
     //封装统一的发送url接口，解决ios、android兼容问题，这里发出的url会被拦截，会获取其中参数，比如：
-    //这里会获取getAdressList参数，调用native接口回去通讯录数据，形成json data数据，拿到webview的window执行，window.Hybrid['hybrid12334'](data)
+    //这里会获取getAdressList参数，调用native接口回去通讯录数据，形成json data数据，拿到webview的window执行，window.Hybrid['hybrid_1427422528529'](data)
     var bridgePostMessage = function (url) {
         if (browser.versions.ios) {
             window.location = url;
@@ -52,7 +52,7 @@
         }
     };
 
-    //根据参数返回满足Hybrid条件的url，比如qian://getAdressList?callback=hybrid12334
+    //根据参数返回满足Hybrid条件的url，比如qian://getAdressList?callback=hybrid_1427422528529
     var _getHybridUrl = function (params) {
         var url = '';
         url += 'qian://' + params.tagName + '?';
