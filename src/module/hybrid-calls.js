@@ -6,7 +6,7 @@
  *     tagName: 'getUrl',
  *     data: {
  *         url: 'ensure.html'
- *     }，
+ *     },
  *     callback:function(){
  *          alert('123');
  *     }
@@ -16,14 +16,13 @@
  */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
-        define(function (require, exports) {
-            return factory(root, exports, require);
+        define(function (exports) {
+            return factory(root, exports);
         });
     } else {
-        root.Infinite = factory(root, {});
+        root.requestHybrid = factory(root, {});
     }
-})(this, function (root, native, require) {
-    require('zepto.min');
+})(this, function (root, hybrid) {
     //判断浏览器环境
     var browser = {
         versions: function () {
@@ -45,9 +44,11 @@
             window.location = url;
         }
         if (browser.versions.android) {
-            var ifr = $('<iframe id="hybridRequest" src="' + url + '"/>');
-            $('body').append(ifr);
-            $('#hybridRequest').remove();
+            var ifr = document.createElement("iframe");
+            ifr.setAttribute('id', 'hybridRequest');
+            ifr.setAttribute('src', url);
+            document.getElementsByTagName("body")[0].appendChild(ifr);
+            ifr.remove();
         }
     };
 
