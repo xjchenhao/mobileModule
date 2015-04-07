@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+    <title>焦点图模块Demo</title>
+    <style>
+        * { margin: 0; padding: 0; list-style: none; }
+        #slideBox { position: absolute; width: 100%; height: 100%; overflow: hidden; }
+        #slideBox ul { height: 100%; overflow: hidden; }
+        #slideBox ul li { position: absolute; height: 100%; overflow: hidden; display: -webkit-box; -webkit-box-pack: center; -webkit-box-align: center; }
+        #slideBox img { max-width: 100%; max-height: 100%; }
+        #slideBox ol { position: absolute; z-index: 999; right: 0; bottom: 0; text-align: right; font-size: 0; line-height: 0 }
+        #slideBox ol li { margin-right: 5px; display: inline-block; width: 10px; height: 10px; background-color: #a6cacc; border-radius: 100% }
+        #slideBox ol li.on { background-color: #cef2f4 }
+    </style>
+</head>
+<body>
+<div id="slideBox">
+</div>
+<input type="hidden" id="slideData" value='[{content: "image/img1.jpg",href:"#"}, {content: "image/img2.jpg",href:"#"}, {content: "image/img3.jpg",href:"#"}]'/>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use("module/slider.js", function (Slider) {
+//        var imgList = [
+//            {
+//                content: "image/img1.jpg",
+//                href:'#'
+//            }, {
+//                content: "image/img2.jpg",
+//                href:'#'
+//            }, {
+//                content: "image/img3.jpg",
+//                href:'#'
+//            }
+//        ];
+        var imgList = eval(document.getElementById('slideData').value);
+        var slide = new Slider({
+            dom: slideBox,
+            data: imgList,
+            isAutoplay: true,
+            isLooping: true,
+            isAutoScale: true,
+            type: 'pic',
+            isVertical: false,
+            onSlideChange: function (page) {
+                var liList = document.getElementById('slideBox').querySelectorAll('li'),
+                        liLength = liList.length;
+                for (var i = 0; i < liLength; i++) {
+                    liList[i].classList.remove('on');
+                }
+                liList[page].classList.add('on');
+            },
+            onSlideInto: function () {
+                var imgLength = imgList.length,
+                        slideBox = document.getElementById('slideBox'),
+                        nodeOl = null,
+                        nodeLi = null;
+                if (imgLength > 1) {
+                    nodeOl = document.createElement("ol");
+                    slideBox.appendChild(nodeOl);
+                    for (var i = 0; i < imgLength; i++) {
+                        nodeLi = document.createElement("li");
+                        nodeLi.appendChild(document.createTextNode(i + 1));
+                        nodeOl.appendChild(nodeLi);
+                    }
+                    nodeOl.querySelectorAll('li')[0].classList.add('on');
+                }
+            }
+        });
+        /*删除模块、内存回收*/
+//        slide.destroy();
+//        slide=null;
+    });
+</script>
+</body>
+</html>

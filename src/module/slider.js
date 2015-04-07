@@ -1,22 +1,25 @@
 /**
- * slider焦点图      1.1.0
+ * slider焦点图      1.1.1
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
- {
-     height: 500,
-     width: 282,
-     content: "image/img1.jpg"
-        //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
- }, {
+     {
+         height: 500,
+         width: 282,
+         content: 'image/img1.jpg',
+         href:'#'
+            //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
+     }, {
         height: 500,
         width: 282,
-        content: "image/img2.jpg"
+        content: 'image/img2.jpg',
+        href:'#'
         //content: "<img height='100%' width='100%' src='image/img3.jpg' />"
     }, {
         height: 500,
         width: 333,
-        content: "image/img3.jpg"
+        content: 'image/img3.jpg',
+        href:'#'
         //content: "<img height='100%' width='100%' src='image/img3.jpg' />"
     }
  ];
@@ -185,12 +188,18 @@
             return '';
         }
         if (this.type === 'pic') {
+            if(item.href){
+                html='<a href="'+item.href+'">';
+            }
             if (this.isAutoScale) {
-                html = item.height / item.width > this.ratio
+                html += item.height / item.width > this.ratio
                     ? '<img height="' + this.height + '" src="' + item.content + '">'
                     : '<img width="' + this.width + '" src="' + item.content + '">';
             } else {
-                html = '<img src="' + item.content + '">';
+                html += '<img src="' + item.content + '">';
+            }
+            if(item.href){
+                html+='</a>';
             }
         } else if (this.type = 'dom') {
             html = '<div style="height:' + item.height + ';width:' + item.width + ';">' + item.content + '</div>';
