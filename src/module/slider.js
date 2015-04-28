@@ -188,8 +188,9 @@
             return '';
         }
         if (this.type === 'pic') {
+            var html='';
             if(item.href){
-                html='<a href="'+item.href+'">';
+                html+='<a href="'+item.href+'">';
             }
             if (this.isAutoScale) {
                 html += item.height / item.width > this.ratio
