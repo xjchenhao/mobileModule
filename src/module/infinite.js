@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.0
+ * 无限下拉加载      1.0.2
  * eg:
  * <div id="page">
  *      <ul>
@@ -15,6 +15,7 @@
  * var infinite = new Infinite({
  *     box: document.getElementById('page'),
  *     con: document.querySelector('#page ul'),
+ *     deviation:0,
  *     callback: function () {
  *         var isLoging = false;
  *         $.ajax({
@@ -35,6 +36,7 @@
  * Ps:
  *  box              elementObj，对应的容器dom（必填）
  *  con              elementObj，加载数据的容器（必填）
+ *  deviation        number,调整滚动条的偏差（特殊情况使用，可无视）
  *  callback         function，滚动到底部的回调函数，需要return true告诉组件数据加载完毕!
  *  destroy          function，销毁对象内存回收
  */
@@ -58,19 +60,19 @@
         /*初始化user data*/
         this.box = opts.box;
         this.con = opts.con;
+        this.deviation = opts.deviation;
         this.callback = opts.callback;
     };
     Infinite.prototype._bindHandler = function () {
         var self = this,
-            isLoging=true;
-        self.page=0;
+            isLoging=true,
+            boxHeight = self.box.clientHeight,
+            contentOffsetTop=self.con.offsetTop;
         self.event = {
             scroll: function (e) {
-                var boxHeight = self.box.clientHeight,
-                    contentHeight = self.con.clientHeight,
+                var contentHeight = self.con.clientHeight,
                     scrollY = Number(e.target.scrollTop);
-                if (scrollY >= contentHeight - boxHeight&& isLoging===true) {
-                    self.page+=1;
+                if (scrollY >= contentHeight - boxHeight+contentOffsetTop+self.deviation&& isLoging===true) {
                     isLoging=false;
                     isLoging=self.callback();
                 }
