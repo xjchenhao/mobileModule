@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.1
+ * 无限下拉加载      1.0.0
  * eg:
  * <div id="page">
  *      <ul>
@@ -62,14 +62,15 @@
     };
     Infinite.prototype._bindHandler = function () {
         var self = this,
-            isLoging=true,
-            boxHeight = self.box.clientHeight,
-            contentOffsetTop=self.con.offsetTop;
+            isLoging=true;
+        self.page=0;
         self.event = {
             scroll: function (e) {
-                var contentHeight = self.con.clientHeight,
+                var boxHeight = self.box.clientHeight,
+                    contentHeight = self.con.clientHeight,
                     scrollY = Number(e.target.scrollTop);
-                if (scrollY >= contentHeight - boxHeight+contentOffsetTop&& isLoging===true) {
+                if (scrollY >= contentHeight - boxHeight&& isLoging===true) {
+                    self.page+=1;
                     isLoging=false;
                     isLoging=self.callback();
                 }
