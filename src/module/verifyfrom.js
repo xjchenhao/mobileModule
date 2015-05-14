@@ -1,3 +1,5 @@
+/* 表单验证    1.0.0*/
+
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (exports) {
@@ -49,6 +51,7 @@
             reg = obj.getAttribute('pattern'),
             ajaxState = false,
             verifyType = obj.getAttribute('data-type') || obj.getAttribute('type');
+        reg=reg && new RegExp('^' + reg + '$');
         //根据type校验相应的格式
         switch (verifyType) {
             case 'mail':
@@ -57,7 +60,7 @@
                     return false;
                 }
                 //格式
-                reg = reg ? new RegExp('^' + reg + '$') : pointer._rule.mail.reg;
+                reg = reg || pointer._rule.mail.reg;
                 if (!reg.test(obj.value)) {
                     pointer.error(obj, '邮箱格式错误');
                     return false;
@@ -96,7 +99,7 @@
                     return false;
                 }
                 //格式
-                reg = reg ? new RegExp('^' + reg + '$') : pointer._rule.phone.reg;
+                reg = reg || pointer._rule.phone.reg;
                 if (!reg.test(obj.value)) {
                     pointer.error(obj, '手机格式错误');
                     return false;
@@ -212,7 +215,7 @@
                     return false;
                 }
                 //格式
-                reg = reg ? new RegExp('^' + reg + '$') : pointer._rule.userName.reg;
+                reg = reg || pointer._rule.userName.reg;
                 if (!reg.test(obj.value)) {
                     pointer.error(obj,'用户名由中文、英文字母、数字、下划线组成,且不能为纯数字');
                     return false;
@@ -302,10 +305,12 @@
     verifyfrom.prototype._bindHandler = function () {
         var pointer = this,
             input = pointer.formBox.getElementsByTagName('input');  //input表单列表
-        for (var i = 0, iLength = input.length; i < iLength; i++) {
-            input[i].onblur = function () {
-                if (pointer.eval(this, pointer.isVerify)) {
-                    pointer.isRemoveVerify && pointer.verifyInput(this);
+        if(pointer.isRemoveVerify){
+            for (var i = 0, iLength = input.length; i < iLength; i++) {
+                input[i].onblur = function () {
+                    if (pointer.eval(input[i].getAttribute('data-required'))) {
+                        pointer.verifyInput(this);
+                    }
                 }
             }
         }
@@ -314,7 +319,7 @@
         var pointer = this,
             input = this.formBox.getElementsByTagName('input');
         for (var i = 0, iLength = input.length; i < iLength; i++) {
-            if (pointer.eval(input[i], pointer.isVerify)) {
+            if (pointer.eval(input[i].getAttribute('data-required'))) {
                 if (!pointer.verifyInput(input[i])) {
                     return false;
                 }
@@ -322,8 +327,8 @@
         }
         return true;
     };
-    verifyfrom.prototype.eval = function (obj, str) {
-        return !!(new Function("return "+obj.getAttribute('data-required')))();
+    verifyfrom.prototype.eval = function (val) {
+        return !!(new Function("return "+ val))();
     };
     verifyfrom.prototype.correct = function (obj) {
         this.removeClass(obj,this.errorStyle);
@@ -336,43 +341,29 @@
         this.errorAfter && this.errorAfter(obj, str);
     };
     verifyfrom.prototype.addClass = function (obj, cls) {
-        var targetObj;
-        if (this.isErrorOnParent) {
-            targetObj = obj.parentElement;
-        } else {
-            targetObj = obj;
-        }
-        if (typeof cls == 'string') {
-            if (targetObj.nodeType === 1) {
-                if (!targetObj.className) {
-                    targetObj.className = cls;
-                } else {
-                    var a = (targetObj.className + ' ' + cls).match(/\S+/g);
-                    a.sort();
-                    for (var i = a.length - 1; i > 0; --i)
-                        if (a[i] == a[i - 1]) a.splice(i, 1);
-                    targetObj.className = a.join(' ');
-                }
+        var targetObj =this.isErrorOnParent?obj.parentElement:obj;
+        if (typeof cls == 'string' && targetObj.nodeType === 1) {
+            if (!targetObj.className) {
+                targetObj.className = cls;
+            } else {
+                var a = (targetObj.className + ' ' + cls).match(/\S+/g);
+                a.sort();
+                for (var i = a.length - 1; i > 0; --i)
+                    if (a[i] == a[i - 1]) a.splice(i, 1);
+                targetObj.className = a.join(' ');
             }
         }
     };
     verifyfrom.prototype.removeClass = function (obj, cls) {
-        var targetObj;
-        if (this.isErrorOnParent) {
-            targetObj = obj.parentElement;
-        } else {
-            targetObj = obj;
-        }
-        if (targetObj.className && typeof cls === 'string') {
-            if (cls) {
-                var classArr = targetObj.className.split(' ');
-                for (var i = 0, iLength = classArr.length; i < iLength; i++) {
-                    if (classArr[i] === cls) {
-                        classArr.splice(i, 1);
-                    }
+        var targetObj =this.isErrorOnParent?obj.parentElement:obj;
+        if (targetObj.className && typeof cls === 'string' && targetObj.nodeType === 1) {
+            var classArr = targetObj.className.split(' ');
+            for (var i = 0, iLength = classArr.length; i < iLength; i++) {
+                if (classArr[i] === cls) {
+                    classArr.splice(i, 1);
                 }
-                targetObj.className = classArr.join(' ');
             }
+            targetObj.className = classArr.join(' ');
         }
     };
     verifyfrom.prototype.strLength = function (str) {
