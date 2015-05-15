@@ -1,5 +1,5 @@
 /**
- * Hybrid交互      1.0.2
+ * Hybrid交互      1.0.3
  * 此模块用来与原生app进行交互
  * 暴露出去一个方法，调用方式如下：
  * requestHybrid({
@@ -76,7 +76,7 @@
         }
         if (params.data) {
             for (x in params.data) {
-                url += x + '=' + params.data[x] + '&';
+                url += x + '=' + encodeURIComponent(params.data[x]) + '&';
             }
         }
         url = url.replace(/^(.+)&$/ig, '$1');
