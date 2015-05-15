@@ -1,5 +1,5 @@
 /**
- * Hybrid交互      1.0.0
+ * Hybrid交互      1.0.1
  * 此模块用来与原生app进行交互
  * 暴露出去一个方法，调用方式如下：
  * requestHybrid({
@@ -37,23 +37,38 @@
     //暴露给原生的对象
     window.Hybrid = {};
 
+    //页面级用户调用的方法
+    var requestHybrid = function (params) {
+        //生成唯一执行函数，执行后销毁
+        var t = 'hybrid_' + (new Date().getTime());
+        //处理有回调的情况
+        if (params.callback) {
+            params.callbackName = t;
+            window.Hybrid[t] = function (data) {
+                params.callback(data);
+                delete window.Hybrid[t];
+            }
+        }
+
+        this.bridgePostMessage(this._getHybridUrl(params))
+    };
     //封装统一的发送url接口，解决ios、android兼容问题，这里发出的url会被拦截，会获取其中参数，比如：
     //这里会获取getAdressList参数，调用native接口回去通讯录数据，形成json data数据，拿到webview的window执行，window.Hybrid['hybrid_1427422528529'](data)
-    var bridgePostMessage = function (url) {
-        if (browser.versions.ios) {
-            window.location = url;
-        }
-        if (browser.versions.android) {
-            var ifr = document.createElement("iframe");
-            ifr.setAttribute('id', 'hybridRequest');
-            ifr.setAttribute('src', url);
-            document.getElementsByTagName("body")[0].appendChild(ifr);
-            ifr.remove();
-        }
+    requestHybrid.prototype.bridgePostMessage = function (url) {
+        //if (browser.versions.ios) {
+        //    window.location = url;
+        //}
+        //if (browser.versions.android) {
+        var ifr = document.createElement("iframe");
+        ifr.setAttribute('id', 'hybridRequest');
+        ifr.setAttribute('src', url);
+        document.getElementsByTagName("body")[0].appendChild(ifr);
+        ifr.remove();
+        //}
     };
 
     //根据参数返回满足Hybrid条件的url，比如qian://getAdressList?callback=hybrid_1427422528529
-    var _getHybridUrl = function (params) {
+    requestHybrid.prototype._getHybridUrl = function (params) {
         var url = '';
         url += 'qian://' + params.tagName + '?';
         if (params.callback) {
@@ -68,22 +83,15 @@
         return url;
     };
 
-    //页面级用户调用的方法
-    var requestHybrid = function (params) {
-        //生成唯一执行函数，执行后销毁
-        var t = 'hybrid_' + (new Date().getTime());
-        //处理有回调的情况
-        if (params.callback) {
-            params.callbackName = t;
-            window.Hybrid[t] = function (data) {
-                params.callback(data);
-                delete window.Hybrid[t];
-            }
-        }
 
-        bridgePostMessage(_getHybridUrl(params))
-    };
 
     //模块暴露requestHybrid函数
-    return requestHybrid;
+    return function(obj){
+        //确保该函数作为构造函数被调用
+        if(!(this instanceof requestHybrid)){
+            return new requestHybrid(obj);
+        }else{
+            return requestHybrid;
+        }
+    };
 });
