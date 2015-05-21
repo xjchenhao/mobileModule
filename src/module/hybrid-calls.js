@@ -101,7 +101,7 @@
     document.HYLOADED = true;
 
     return function(obj){
-        if(!(this instanceof requestHybrid)){
+        if(!(this instanceof hybridProtocol)){
             return new hybridProtocol(obj);
         }else{
             return hybridProtocol;
