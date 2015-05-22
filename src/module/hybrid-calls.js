@@ -1,5 +1,5 @@
 /**
- * Hybrid交互      1.0.5
+ * Hybrid交互      1.7.5
  * 此模块用来与原生app进行交互
  * 暴露出去一个方法，调用方式如下：
  * hybridProtocol({
@@ -49,6 +49,7 @@
         this._bridgePostMessage();
     };
 
+    hybridProtocol.VERSION='1.7';
     hybridProtocol.prototype._bridgePostMessage = function () {
         var self=this,
             ifr = document.createElement("iframe");
@@ -58,7 +59,7 @@
         ifr.parentNode.removeChild(ifr);
         if(self._params.success){
             self._overtime=setTimeout(function(){
-                self._params.error();
+                self._params.error && self._params.error();
             },3000);
         }
     };
@@ -66,18 +67,30 @@
     //生成协议url
     hybridProtocol.prototype._getHybridUrl = function () {
         var self=this,
+            paramsHandl=null,
             url = 'qian://' + self._params.tagName + '?',
             timeStamp=new Date().getTime(),
             addCallback=function(str){
                 var callbackName=str+timeStamp;
                 root.Hybrid[callbackName] = function (data) {
-                    self._params[str](data);
+                    paramsHandl[str](data);
                     clearTimeout(self._overtime);
                     delete root.Hybrid[callbackName];
                 };
                 url += str + '=' + encodeURIComponent(callbackName) + '&';
             };
-        for (var params in self._params.data) {
+        paramsHandl=(function objectHandl(params){
+            for(var key in params){
+                var val=params[key];
+                if(typeof val =='object' && Object.prototype.toString.call(val).toLowerCase() == "[object object]" && !val.length){
+                    objectHandl(val);
+                }else{
+                    params[key]=encodeURIComponent(val);
+                }
+            }
+            return params;
+        }(self._params));
+        for (var params in paramsHandl.data) {
             //处理有回调的情况
             if (params =='callback') {
                 var callbackName = 'hybrid_' + timeStamp;
@@ -86,12 +99,17 @@
                     delete root.Hybrid[callbackName];
                 };
                 url += params + '=' + encodeURIComponent(callbackName) + '&';
+            }else if(params == 'data'){
+                if(paramsHandl.data[params]){
+                    url += params + '=' + JSON.stringify(paramsHandl.data[params]) + '&';
+                    //url += params + '=' + paramsHandl.data[params] + '&';
+                }
             }else{
-                url += params + '=' + encodeURIComponent(self._params.data[params]) + '&';
+                url += params + '=' + paramsHandl.data[params] + '&';
             }
         }
-        self._params.success && addCallback('success');
-        self._params.error && addCallback('error');
+        paramsHandl.success && addCallback('success');
+        paramsHandl.error && addCallback('error');
 
         url = url.replace(/^(.+)&$/ig, '$1');
         self.url=url;
