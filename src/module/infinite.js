@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.2
+ * 无限下拉加载      1.0.3
  * eg:
  * <div id="page">
  *      <ul>
@@ -48,7 +48,7 @@
     } else {
         root.Infinite = factory(root, {});
     }
-})(this, function (root, slider) {
+})(this, function (root) {
     var Infinite = function (opts) {
         this._opts = opts;
         this._setting();
@@ -72,7 +72,7 @@
             scroll: function (e) {
                 var contentHeight = self.con.clientHeight,
                     scrollY = Number(e.target.scrollTop);
-                if (scrollY >= contentHeight - boxHeight+contentOffsetTop+self.deviation&& isLoging===true) {
+                if (scrollY >= contentHeight - boxHeight+self.deviation&& isLoging===true) {
                     isLoging=false;
                     isLoging=self.callback();
                 }
