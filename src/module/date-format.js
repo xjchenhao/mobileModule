@@ -4,10 +4,10 @@
 (function (root, factory) {
 	if (typeof define === 'function' && (define.amd || define.cmd)) {
 		define(function (require, exports, module) {
-			return new factory(root,{});
+			return factory(root,{});
 		});
 	} else {
-		root.timeFormat = new factory(root,{});
+		root.timeFormat = factory(root,{});
 	}
 })(this, function (root) {
 	var TimeFormat = function() {
@@ -120,5 +120,5 @@
 			return result;
 		};
 	};
-	return TimeFormat;
+	return new TimeFormat;
 });
