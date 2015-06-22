@@ -13,7 +13,7 @@
         if (document.getElementById(formId)) {
             this.formBox = document.getElementById(formId);
         }else{
-            //throw new Error("请设置表单容器id!");
+            //throw new Error("请设置表单容器id");
             this.formBox = document;
         }
         this._opts = opts;
