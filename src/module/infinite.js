@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.3
+ * 无限下拉加载      1.0.4
  * eg:
  * <div id="page">
  *      <ul>
@@ -34,7 +34,7 @@
  *     }
  * });
  * Ps:
- *  box              elementObj，对应的容器dom（必填）
+ *  box              elementObj，对应的容器dom,接收js的元素对象（必填）
  *  con              elementObj，加载数据的容器（必填）
  *  deviation        number,调整滚动条的偏差（特殊情况使用，可无视）
  *  callback         function，滚动到底部的回调函数，需要return true告诉组件数据加载完毕!
@@ -65,20 +65,24 @@
     };
     Infinite.prototype._bindHandler = function () {
         var self = this,
-            isLoging=true,
+            isLoging = true,
             boxHeight = self.box.clientHeight,
-            contentOffsetTop=self.con.offsetTop;
+            isBody = self.box === document.getElementsByTagName('body')[0];
         self.event = {
             scroll: function (e) {
                 var contentHeight = self.con.clientHeight,
-                    scrollY = Number(e.target.scrollTop);
-                if (scrollY >= contentHeight - boxHeight+self.deviation&& isLoging===true) {
-                    isLoging=false;
-                    isLoging=self.callback();
+                    scrollY = isBody ? document.getElementsByTagName('body')[0].scrollTop : Number(e.target.scrollTop);
+                if (scrollY >= contentHeight - boxHeight + self.deviation && isLoging === true) {
+                    isLoging = false;
+                    isLoging = self.callback();
                 }
             }
         };
-        self.box.addEventListener('scroll', self.event.scroll, false);
+        if (isBody) {
+            document.addEventListener('scroll', self.event.scroll, false);
+        } else {
+            self.box.addEventListener('scroll', self.event.scroll, false);
+        }
     };
     Infinite.prototype.destroy = function () {
         var self = this;
