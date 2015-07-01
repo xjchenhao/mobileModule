@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.4
+ * 无限下拉加载      1.0.5
  * eg:
  * <div id="page">
  *      <ul>
@@ -67,26 +67,28 @@
         var self = this,
             isLoging = true,
             boxHeight = self.box.clientHeight,
-            isBody = self.box === document.getElementsByTagName('body')[0];
+            elBody = document.getElementsByTagName('body')[0],
+            isBody = self.box === elBody;
         self.event = {
             scroll: function (e) {
-                var contentHeight = self.con.clientHeight,
-                    scrollY = isBody ? document.getElementsByTagName('body')[0].scrollTop : Number(e.target.scrollTop);
+                var contentHeight = isBody ? elBody.scrollHeight : self.con.clientHeight,
+                    scrollY = isBody ? elBody.scrollTop : Number(e.target.scrollTop);
                 if (scrollY >= contentHeight - boxHeight + self.deviation && isLoging === true) {
                     isLoging = false;
                     isLoging = self.callback();
                 }
             }
         };
-        if (isBody) {
-            document.addEventListener('scroll', self.event.scroll, false);
-        } else {
-            self.box.addEventListener('scroll', self.event.scroll, false);
-        }
+
+        (isBody ? document : self.box).addEventListener('scroll', self.event.scroll, false);
     };
     Infinite.prototype.destroy = function () {
         var self = this;
-        self.box.removeEventListener('scroll', self.event.scroll, false);
+        if (isBody) {
+            self.box.removeEventListener('scroll', self.event.scroll, false);
+        } else {
+            self.box.removeEventListener('scroll', self.event.scroll, false);
+        }
     };
     return Infinite;
 });
