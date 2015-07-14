@@ -1,15 +1,15 @@
 /**
- * slider焦点图      1.1.1
+ * slider焦点图      1.1.3
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
-     {
-         height: 500,
-         width: 282,
-         content: 'image/img1.jpg',
-         href:'#'
-            //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
-     }, {
+ {
+     height: 500,
+     width: 282,
+     content: 'image/img1.jpg',
+     href:'#'
+        //content: "<img height='100%' width='100%' src='image/img1.jpg' />"
+ }, {
         height: 500,
         width: 282,
         content: 'image/img2.jpg',
@@ -69,7 +69,7 @@
     } else {
         root.Slider = factory(root, {});
     }
-})(this, function (root, slider) {
+})(this, function (root, exports) {
     "use strict";
     var Slider = function (opts) {
         if (!opts.dom) {
@@ -188,9 +188,8 @@
             return '';
         }
         if (this.type === 'pic') {
-            var html='';
             if(item.href){
-                html+='<a href="'+item.href+'">';
+                html='<a href="'+item.href+'">';
             }
             if (this.isAutoScale) {
                 html += item.height / item.width > this.ratio
@@ -278,7 +277,7 @@
             isMoving = false,         //是否在触摸过程中
             outer = this.outer,
             hasTouch = (function () {
-                return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+                return !!(('ontouchstart' in root) || root.DocumentTouch && document instanceof DocumentTouch);
             })();
         this.touch = {
             hasTouch: hasTouch,
@@ -289,7 +288,6 @@
         };
         this.event = {
             start: function (evt) {
-                evt.preventDefault();
                 self.pause();
                 isMoving = true;
                 self.callback.onTouchStart && self.callback.onTouchStart();
@@ -300,7 +298,7 @@
             },
             move: function (evt) {
                 if (isMoving) {
-                    evt.preventDefault();
+                    //evt.preventDefault();
                     self.onslide && self.onslide();
                     var axis = self.axis,
                         currentPoint = self.touch.hasTouch ? evt.targetTouches[0]['page' + axis] : evt['page' + axis],
@@ -319,7 +317,7 @@
                 }
             },
             end: function (evt) {
-                evt.preventDefault();
+                //evt.preventDefault();
                 isMoving = false;
                 var boundary = self.scale / 2,                               //切换的临界值
                     metric = self.offset,                                    //获取偏移量
@@ -350,16 +348,19 @@
                 self.pause();
             }
         };
+        if(this._opts.data.length<2){
+            return;
+        }
         outer.addEventListener(self.touch.startEvt, self.event.start);
         outer.addEventListener(self.touch.moveEvt, self.event.move);
         outer.addEventListener(self.touch.endEvt, self.event.end);
-        window.addEventListener(self.touch.sizeEvt, self.event.orientation);
+        root.addEventListener(self.touch.sizeEvt, self.event.orientation);
     };
     /*禁止安卓不在当前页面也自动播放*/
     Slider.prototype._setPlayWhenFocus = function () {
         var self = this;
-        window.addEventListener('focus', self.event.focus, false);
-        window.addEventListener('blur', self.event.blur, false);
+        root.addEventListener('focus', self.event.focus, false);
+        root.addEventListener('blur', self.event.blur, false);
 
     };
     /*自动播放*/
@@ -389,9 +390,9 @@
         outer.removeEventListener(self.touch.startEvt, self.event.start);
         outer.removeEventListener(self.touch.moveEvt, self.event.move);
         outer.removeEventListener(self.touch.endEvt, self.event.end);
-        window.removeEventListener('focus', self.event.focus, false);
-        window.removeEventListener('blur', self.event.blur, false);
-        window.removeEventListener(self.touch.sizeEvt, self.event.orientation);
+        root.removeEventListener('focus', self.event.focus, false);
+        root.removeEventListener('blur', self.event.blur, false);
+        root.removeEventListener(self.touch.sizeEvt, self.event.orientation);
         this.callback.onDestroy && this.callback.onDestroy();
         this.isDestroyCon && (this.wrap.innerHTML = '');
     };
