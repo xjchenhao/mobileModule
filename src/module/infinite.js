@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.5
+ * 无限下拉加载      1.0.6
  * eg:
  * <div id="page">
  *      <ul>
@@ -83,7 +83,9 @@
         (isBody ? document : self.box).addEventListener('scroll', self.event.scroll, false);
     };
     Infinite.prototype.destroy = function () {
-        var self = this;
+        var self = this,
+            elBody = document.getElementsByTagName('body')[0],
+            isBody = self.box === elBody;
         if (isBody) {
             self.box.removeEventListener('scroll', self.event.scroll, false);
         } else {
