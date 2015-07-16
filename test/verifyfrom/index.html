@@ -26,7 +26,15 @@
                 password = $('#password')[0],
                 submitBtn = $('#submitBtn')[0];
 
-        var verifyfrom = new Verifyfrom();
+        var verifyfrom = new Verifyfrom({
+            isBlurVerify: true,  // 是否绑定失去焦点时间
+            succeed: function (obj) {  // 成功执行回调
+                console.dir(obj);
+            },
+            failure: function (obj, errorMsg) { // 失败执行回调
+                alert(errorMsg);
+            }
+        });
 
         verifyfrom.add(userPhone, [{
             strategy: 'isNonEmpty',
