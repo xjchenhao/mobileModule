@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+    <title>表单验证插件</title>
+</head>
+<body>
+<input type="text" data-type="mail" data-required="1" />
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use(["module/verifyfrom-old","ajaxMap","jquery"], function (Verifyfrom) {
+        Verifyfrom('',{
+            errorStyle:'abc',
+            rule:{
+                mail:{
+                    isAjax:true,
+                    ajaxUrl:'returnFalse.html',
+                    ajaxCallback:function(data){
+                        alert(data)
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

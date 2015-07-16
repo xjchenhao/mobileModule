@@ -4,25 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
-    <title>表单验证插件</title>
+    <title>表单验证</title>
 </head>
 <body>
-<input type="text" data-type="mail" data-required="1" />
+<form id="registerForm">
+    <div class="row">
+        <label>手机号:<input id="userPhone" type="text"/></label>
+    </div>
+    <div class="row">
+        <label>密&nbsp;&nbsp;&nbsp;&nbsp;码:<input id="password" type="password"/></label>
+    </div>
+    <div class="row">
+        <input id="submitBtn" type="submit" value="提交"/>
+    </div>
+</form>
 <script src="../../src/sea.js"></script>
 <script>
-    seajs.use(["module/verifyfrom","ajaxMap","jquery"], function (Verifyfrom) {
-        Verifyfrom('',{
-            errorStyle:'abc',
-            rule:{
-                mail:{
-                    isAjax:true,
-                    ajaxUrl:'returnFalse.html',
-                    ajaxCallback:function(data){
-                        alert(data)
+    seajs.use(["module/verifyfrom", "ajaxMap", "jquery"], function (Verifyfrom) {
+        var registerForm = document.getElementById('registerForm'),
+                userPhone = $('#userPhone')[0],
+                password = $('#password')[0],
+                submitBtn = $('#submitBtn')[0];
+
+        var verifyfrom = new Verifyfrom();
+
+        verifyfrom.add(userPhone, [{
+            strategy: 'isNonEmpty',
+            errorMsg: '用户名不能为空'
+        }, {
+            strategy: 'isReg:^((13[0-9]{9})|(14[0-9]{9})|(15[0-35-9][0-9]{8})|(17[0-9]{9})|(18[0-9]{9}))$',
+            errorMsg: '请输入正确的手机号码'
+        }, {
+            strategy: 'serverVerify',
+            requestFunc: function (value) {
+                var errorMsg = '';    //错误信息
+                $.ajax({
+                    type: 'POST',
+                    url: 'returnFalse.html',
+                    data: value,
+                    dataType: 'json',
+                    async: false,
+                    success: function (data) {
+                        errorMsg = data;
                     }
-                }
+                });
+                return errorMsg && errorMsg;
             }
-        });
+        }]);
+        verifyfrom.add(password, [{
+            strategy: 'isNonEmpty',
+            errorMsg: '密码不能为空'
+        }, {
+            strategy: 'minLength:6',
+            errorMsg: '密码长度不能小于6'
+        }]);
+
+        registerForm.onsubmit = function () {
+            var errorMsg = verifyfrom.start();
+            if (errorMsg) {
+                console.log(errorMsg);
+                return false;
+            }
+        };
     });
 </script>
 </body>
