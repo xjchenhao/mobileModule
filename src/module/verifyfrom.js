@@ -1,4 +1,4 @@
-/* 表单验证    2.1.0*/
+/* 表单验证    2.1.1*/
 
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -42,8 +42,9 @@
                 }
             }
         },
-        succeed = null,
-        failure = null;
+        verifyStart = true, // 触发表单校验start方法的模拟blur事件时,遇到错误就关闭校验状态,阻止进行后面的校验
+        succeed = null, // 表单元素校验成功回调函数,函数有一个回调参数,即校验成功的表单元素
+        failure = null; // 表单元素校验失败回调函数,函数有两个回调参数,第一个是校验失败的表单元素,第二个是错误的描述文字
 
     var Validator = function (obj) {
         this.domCache = [];
@@ -72,7 +73,9 @@
                 };
                 if (self.isBlurVerify) {
                     dom.addEventListener('blur', function () {
-                        return verifyFunc();
+                        if (verifyFunc()) {
+                            verifyStart = false;
+                        }
                     }, false);
 
                     if (!self._inArray(dom, self.domCache)) {
@@ -85,8 +88,12 @@
     };
 
     Validator.prototype.start = function () {
+        verifyStart = true;
         if (this.isBlurVerify) {
             for (var i = 0, dom; dom = this.domCache[i++];) {
+                if (!verifyStart) {
+                    break;
+                }
                 this._trigger(dom);
             }
         } else {
