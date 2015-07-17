@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+    <title>无限加载Demo</title>
+    <style>
+        * { margin: 0; padding: 0; list-style: none }
+        header, footer { position: absolute; left: 0; height: 50px; width: 100%; background-color: #aaa; text-align: center; line-height: 50px; }
+        header { top: 0; }
+        footer { bottom: 0; }
+        #page {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50px !important;
+            bottom: 50px !important;
+            height: auto !important;
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<header>我是头部</header>
+<main id="page">
+</main>
+<footer>我是底部</footer>
+<script src="../../src/sea.js"></script>
+<script id="pageDate" type="text/x-handlebars-template">
+    <ul>
+        {{#each this}}
+        <li class="am-g am-list-item-dated">{{title}}</li>
+        <li class="am-g am-list-item-dated">{{title}}</li>
+        {{/each}}
+    </ul>
+</script>
+<script>
+    seajs.use(["module/load-date","handlebars"], function (LoadDate) {
+        var loadDate=new LoadDate({
+            url: './ajax/list.json', // 接口地址(必须)
+            container: '#page', // load-container 容器对象(必须)
+            noListStr: '暂无记录', // 无记录时，显示的文本(缺省)
+            sendData: {}, // 默认发送的data数据(缺省)  去除了page :1，不可为null
+            tplFn: function(data){
+                var template = Handlebars.default.compile(document.getElementById('pageDate').innerHTML); // 特别注明该处模版编译方法调用方式因版本而异
+                return template(data);
+            },   // 传入data解析成html函数
+            callback: null   // 载入完成后的回调函数(缺省)(用于绑定事件，注意尽量事件委托，并注意先off，免得重复绑定)
+        });
+        console.dir(loadDate);
+    });
+</script>
+</body>
+</html>
