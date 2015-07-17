@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.6
+ * 无限下拉加载      1.0.7
  * eg:
  * <div id="page">
  *      <ul>
@@ -60,7 +60,7 @@
         /*初始化user data*/
         this.box = opts.box;
         this.con = opts.con;
-        this.deviation = opts.deviation;
+        this.deviation = opts.deviation || 0;
         this.callback = opts.callback;
     };
     Infinite.prototype._bindHandler = function () {
