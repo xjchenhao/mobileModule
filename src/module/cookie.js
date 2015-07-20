@@ -1,7 +1,15 @@
 /**
  * Cookie读写      1.0.0
  */
-define(function (require, exports, module) {
+(function (root, factory) {
+    if (typeof define === 'function' && (define.amd || define.cmd)) {
+        define(function (require, exports, module) {
+            return factory(root,{});
+        });
+    } else {
+        root.Cookie = factory(root,{});
+    }
+})(this, function (root) {
     /*读取cookie*/
     var Cookie={
         getCookie:function (c_name) {
