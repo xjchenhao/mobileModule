@@ -1,4 +1,4 @@
-/* 表单验证    2.1.1*/
+/* 表单验证    2.1.2*/
 
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -21,23 +21,27 @@
             },
             minLength: function (value, length, errorMsg) {
                 if (value.length < length) {
+                    failure(this, errorMsg);
                     return errorMsg;
                 }
             },
             maxLength: function (value, length, errorMsg) {
                 if (value.length > length) {
+                    failure(this, errorMsg);
                     return errorMsg;
                 }
             },
             isReg: function (value, reg, errorMsg) {
                 var reg = new RegExp(reg);
                 if (!reg.test(value)) {
+                    failure(this, errorMsg);
                     return errorMsg;
                 }
             },
             serverVerify: function (value, requestFunc) {
                 var errorMsg = requestFunc(value);
                 if (errorMsg) {
+                    failure(this, errorMsg);
                     return errorMsg;
                 }
             }
@@ -55,10 +59,14 @@
     };
 
     Validator.prototype.add = function (dom, rules) {
-        var self = this;
+        var self = this,
+            eventFunc=[];   // blur事件的方法栈
 
         for (var i = 0, rule; rule = rules[i++];) {
+
             (function (rule) {
+
+                // 生成校验函数
                 var verifyFunc = function () {
                     var strategAry = rule.strategy.split(':'),
                         strategy = strategAry.shift();  // 取出规则名
@@ -71,19 +79,28 @@
                     }
                     return strategies[strategy].apply(dom, strategAry);
                 };
-                if (self.isBlurVerify) {
-                    dom.addEventListener('blur', function () {
-                        if (verifyFunc()) {
-                            verifyStart = false;
-                        }
-                    }, false);
 
-                    if (!self._inArray(dom, self.domCache)) {
-                        self.domCache.push(dom);
-                    }
+                // 校验函数推入方法栈
+                if (self.isBlurVerify) {
+                    eventFunc.push(verifyFunc);
                 }
                 self.funcCache.push(verifyFunc);
             }(rule));
+        }
+
+        // 添加blur方法
+        if (self.isBlurVerify) {
+            dom.addEventListener('blur', function () {
+                for(var i= 0,func;func=eventFunc[i++];){
+                    if(func()){
+                        verifyStart = false;
+                        return false;
+                    }
+                }
+            }, false);
+
+            // 推入被绑定blur的元素栈
+            self.domCache.push(dom);
         }
     };
 
@@ -91,11 +108,12 @@
         verifyStart = true;
         if (this.isBlurVerify) {
             for (var i = 0, dom; dom = this.domCache[i++];) {
-                if (!verifyStart) {
-                    break;
-                }
                 this._trigger(dom);
+                if (!verifyStart) {
+                    return false;
+                }
             }
+            return true;
         } else {
             for (var i = 0, validatorFunc; validatorFunc = this.funcCache[i++];) {
                 var errorMsg = validatorFunc();

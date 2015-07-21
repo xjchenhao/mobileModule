@@ -68,8 +68,7 @@
         }]);
 
         registerForm.onsubmit = function () {
-            var errorMsg = verifyfrom.start();
-            if (errorMsg) {
+            if (verifyfrom.start()) {
                 console.log(errorMsg);
                 return false;
             }
