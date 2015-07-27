@@ -1,4 +1,4 @@
-/* 表单验证    2.1.2*/
+/* 表单验证    2.1.3*/
 
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -14,43 +14,49 @@
     var strategies = {
             isNonEmpty: function (value, errorMsg) {
                 if (value === '') {
-                    failure(this, errorMsg);
+                    failure && failure(this, errorMsg);
                     return errorMsg;
                 }
-                succeed(this);
+                succeed && succeed(this);
             },
             minLength: function (value, length, errorMsg) {
                 if (value.length < length) {
-                    failure(this, errorMsg);
+                    failure && failure(this, errorMsg);
                     return errorMsg;
                 }
+                succeed && succeed(this);
             },
             maxLength: function (value, length, errorMsg) {
                 if (value.length > length) {
-                    failure(this, errorMsg);
+                    failure && failure(this, errorMsg);
                     return errorMsg;
                 }
+                succeed && succeed(this);
             },
             isReg: function (value, reg, errorMsg) {
                 var reg = new RegExp(reg);
                 if (!reg.test(value)) {
-                    failure(this, errorMsg);
+                    failure && failure(this, errorMsg);
                     return errorMsg;
                 }
+                succeed && succeed(this);
             },
             serverVerify: function (value, requestFunc) {
                 var errorMsg = requestFunc(value);
                 if (errorMsg) {
-                    failure(this, errorMsg);
+                    failure && failure(this, errorMsg);
                     return errorMsg;
                 }
+                succeed && succeed(this);
             }
         },
         verifyStart = true, // 触发表单校验start方法的模拟blur事件时,遇到错误就关闭校验状态,阻止进行后面的校验
+        eventFunc = [],   // blur事件的方法栈
         succeed = null, // 表单元素校验成功回调函数,函数有一个回调参数,即校验成功的表单元素
         failure = null; // 表单元素校验失败回调函数,函数有两个回调参数,第一个是校验失败的表单元素,第二个是错误的描述文字
 
     var Validator = function (obj) {
+        var obj = obj || {};
         this.domCache = [];
         this.funcCache = [];
         this.isBlurVerify = obj.isBlurVerify || false;
@@ -59,8 +65,7 @@
     };
 
     Validator.prototype.add = function (dom, rules) {
-        var self = this,
-            eventFunc=[];   // blur事件的方法栈
+        var self = this;
 
         for (var i = 0, rule; rule = rules[i++];) {
 
@@ -90,14 +95,7 @@
 
         // 添加blur方法
         if (self.isBlurVerify) {
-            dom.addEventListener('blur', function () {
-                for(var i= 0,func;func=eventFunc[i++];){
-                    if(func()){
-                        verifyStart = false;
-                        return false;
-                    }
-                }
-            }, false);
+            dom.addEventListener('blur', validate, false);
 
             // 推入被绑定blur的元素栈
             self.domCache.push(dom);
@@ -124,6 +122,14 @@
         }
     };
 
+    Validator.prototype.destroy = function () {
+        var self = this;
+        self.domCache.forEach(function (obj) {
+            console.log(obj);
+            obj.removeEventListener('blur', validate, false);
+        });
+    };
+
     Validator.prototype._inArray = function (needle, array) {
         for (var i in array) {
             if (needle === array[i]) {
@@ -138,6 +144,15 @@
         event.initMouseEvent('blur', true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         obj.dispatchEvent(event);
     };
+
+    function validate() {
+        for (var i = 0, func; func = eventFunc[i++];) {
+            if (func()) {
+                verifyStart = false;
+                return false;
+            }
+        }
+    }
 
     return Validator;
 });
