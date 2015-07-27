@@ -125,7 +125,6 @@
     Validator.prototype.destroy = function () {
         var self = this;
         self.domCache.forEach(function (obj) {
-            console.log(obj);
             obj.removeEventListener('blur', validate, false);
         });
     };
