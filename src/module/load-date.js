@@ -1,4 +1,4 @@
-/*数据加载 1.0.0*/
+/*数据加载 1.0.1*/
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (require, exports, module) {
@@ -29,8 +29,9 @@
         };
     }());
 
-    //new出多个实例时保证每个实例事件的独立性
-    var _eventId = 0;
+
+    var _eventId = 0,   // new出多个实例时保证每个实例事件的独立性
+        currentPage = 1;  // 请求页码
 
 
     var LoadDate = function (opts) {
@@ -78,18 +79,20 @@
             async: true,
             data: config.sendData,
             dataType: 'json',
+            type: 'POST',
             success: function (data) {
                 var html;
 
-                //if (!data[ROWS] || data[ROWS].length <= 0) {
-                //    Event.trigger('noData.' + eventId);
-                //    return;
-                //}
+                if (!getObjVal(data, ROWS) || getObjVal(data, ROWS) <= 0) {
+                    Event.trigger('noData.' + eventId);
+                    return;
+                }
 
                 html = config.tplFn(data);
 
                 Event.trigger('hasData.' + eventId, data, html);
             },
+            timeout: 5000,
             error: function () {
                 Event.trigger('fail.' + eventId);
             }
@@ -107,29 +110,40 @@
         Event.one("hasData." + eventId, function (data, html) {
             removeStatus();
             content.html(html);
+            currentPage++;
             callback && callback.call(null, true, data);
         });
 
         // 有数据,挂载下拉加载事件
         Event.one("hasData." + eventId, function (data, html) {
             var infinite = new Infinite({
-                box: container[0],
-                con: content[0],
+                box: config.container.parent()[0],
+                con: config.container[0],
                 callback: function () {
-                    var isLoging = false;
+                    var isLoading = false,
+                        currentPageObj={};  // $.extend里直接写对象的话,常量变成普通的字面量输出了,所以先在外面生成对象再放进去
+
+                    currentPageObj[PAGE]=currentPage;
                     $.ajax({
                         url: config.url,
                         type: "post",
                         dataType: "json",
-                        data: config.sendData,
+                        data: $.extend(config.sendData, currentPageObj),
                         async: false,
                         success: function (data) {
+
+                            // 超出总页数
+                            if (currentPage > getObjVal(data, PAGE_COUNT)) {
+                                return false;
+                            }
+
+                            currentPage++;
                             var html = config.tplFn(data);
                             content.append(html);
-                            isLoging = true;
+                            isLoading = true;
                         }
                     });
-                    return isLoging;
+                    return isLoading;
                 }
             });
         });
@@ -171,5 +185,14 @@
             var array = slice.call(arguments, 0);
             return method.apply(context, args.concat(array));
         };
+    }
+
+    function getObjVal(obj, str) {
+        var val = obj,
+            valArr = str.split('.');
+        for (var i = 0, l = valArr.length; i < l; i++) {
+            val = val[valArr[i]];
+        }
+        return val;
     }
 });
