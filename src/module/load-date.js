@@ -1,4 +1,4 @@
-/*数据加载 1.0.1*/
+/*数据加载 1.0.2*/
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (require, exports, module) {
@@ -13,9 +13,9 @@
     }
 })(this, function (root, Event, Infinite, status) {
     // 分页接口（这里需要配置）
-    var ROWS = 'list', // 条数
-        PAGE = 'currentPage', // 当前页
-        PAGE_COUNT = 'pages';// 分页总数
+    var PAGE = 'currentPage', // 当前页
+        ROWS = 'resultData.total', // 条数
+        PAGE_COUNT = 'resultData.pages';// 分页总数
 
     // 类名常量
     var classPrefix = 'ui-load-';
@@ -64,6 +64,7 @@
 
         //添加事件订阅
         this._addEvent();
+
     };
 
     LoadDate.prototype._load = function () {
@@ -73,6 +74,9 @@
 
         // 给容器添加加载中class
         config.container.addClass(CLASS.LOADING_BG);
+
+        // 生成加载中状态
+        Event.trigger('loading.' + eventId);
 
         $.ajax({
             url: config.url,
@@ -163,8 +167,14 @@
             status.again(content, reLoad);
         });
 
+        // 加载中
+        Event.one("loading." + eventId, function () {
+            status.loading.show(content);
+        });
+
         function removeStatus() {    // 初始化,移除容器的各种状态
             status.removeNoData(content);
+            status.loading.hide(content);
             container.removeClass(CLASS.LOADING_BG);
         }
     };
