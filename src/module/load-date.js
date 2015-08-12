@@ -1,4 +1,4 @@
-/*数据加载 1.0.2*/
+/*数据加载 1.0.3*/
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (require, exports, module) {
@@ -84,6 +84,9 @@
             data: config.sendData,
             dataType: 'json',
             type: 'POST',
+            xhrFields: {
+                withCredentials: true
+            },
             success: function (data) {
                 var html;
 
@@ -134,6 +137,9 @@
                         dataType: "json",
                         data: $.extend(config.sendData, currentPageObj),
                         async: false,
+                        xhrFields: {
+                            withCredentials: true
+                        },
                         success: function (data) {
 
                             // 超出总页数
