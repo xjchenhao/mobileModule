@@ -29,7 +29,7 @@
 </main>
 <footer>我是底部</footer>
 <script src="../../src/sea.js"></script>
-<script id="pageDate" type="text/x-handlebars-template">
+<script id="pageData" type="text/x-handlebars-template">
     <ul>
         {{#each this}}
         <li class="am-g am-list-item-dated">{{title}}</li>
@@ -38,14 +38,14 @@
     </ul>
 </script>
 <script>
-    seajs.use(["module/load-date","handlebars"], function (LoadDate) {
+    seajs.use(["module/load-data","handlebars"], function (LoadDate) {
         var loadDate=new LoadDate({
             url: './ajax/list.json', // 接口地址(必须)
             container: '#page', // load-container 容器对象(必须)
             noListStr: '暂无记录', // 无记录时，显示的文本(缺省)
             sendData: {}, // 默认发送的data数据(缺省)  去除了page :1，不可为null
             tplFn: function(data){
-                var template = Handlebars.default.compile(document.getElementById('pageDate').innerHTML); // 特别注明该处模版编译方法调用方式因版本而异
+                var template = Handlebars.default.compile(document.getElementById('pageData').innerHTML); // 特别注明该处模版编译方法调用方式因版本而异
                 return template(data);
             },   // 传入data解析成html函数
             callback: null   // 载入完成后的回调函数(缺省)(用于绑定事件，注意尽量事件委托，并注意先off，免得重复绑定)
