@@ -1,5 +1,5 @@
 /**
- * slider焦点图      1.1.3
+ * slider焦点图      1.1.4
  * eg:
  * <div id="slideName"></div>
  *  var imgList = [
@@ -95,6 +95,7 @@
         this.isAutoScale = opts.isAutoScale || false;   //是否智能调整图片宽高比例
         this.isVertical = opts.isVertical || false;     //是否垂直
         this.isDestroyCon = opts.isDestroyCon || false; //销毁时是否清空内容
+        this.isImgLazy = opts.isImgLazy || true;        //图片是否懒加载
         this.duration = opts.duration || 2000;           //自动滑动时的间隔时间(毫秒)
         this.axis = this.isVertical ? 'Y' : 'X';        //方向
 
@@ -191,12 +192,16 @@
             if(item.href){
                 html='<a href="'+item.href+'">';
             }
+            var _src = 'src';
+            if (this.isImgLazy) {
+                _src = 'data-src';
+            }
             if (this.isAutoScale) {
                 html += item.height / item.width > this.ratio
-                    ? '<img height="' + this.height + '" src="' + item.content + '">'
-                    : '<img width="' + this.width + '" src="' + item.content + '">';
+                    ? '<img height="' + this.height + '" ' + _src + '="' + item.content + '">'
+                    : '<img width="' + this.width + '" ' + _src + '="' + item.content + '">';
             } else {
-                html += '<img src="' + item.content + '">';
+                html += '<img ' + _src + '="' + item.content + '">';
             }
             if(item.href){
                 html+='</a>';
@@ -346,6 +351,44 @@
             },
             blur: function (evt) {
                 self.pause();
+            },
+            lazyLoad: function (evt) {
+                // 图片加载私有方法
+                var _imgLoad = function(src, callback){
+                    var _img = document.createElement('img');
+                    _img.onload = _img.error = function(){
+                        callback && callback();
+                    };
+                    _img.src = src;
+                };
+                var _lazyLoad = function(arr, callback){
+                    var _imgs = arr;
+                    var _length = _imgs.length;
+                    var _loadNum = 0;
+                    function loadfn(){
+                        _loadNum++;
+                        if(_loadNum == _length){
+                            callback && callback();
+                        }
+                    }
+                    for(var i = 0; i<_length; i++){
+                        _imgLoad(arr[i], loadfn)
+                    }
+                };
+                if(self.isImgLazy){
+                    var _arrImg = [];
+                    for(var i= 0,len=self.data.length; i<len; i++) {
+                        _arrImg.push(self.data[i]['content']);
+                    }
+                    _lazyLoad(_arrImg, function(){
+                        var _lis = self.outer.getElementsByTagName('li');
+                        for(var k= 0,l=self.els.length; k<l; k++){
+                            var _img = self.els[k].getElementsByTagName('img')[0];
+                            _img.setAttribute('src', _img.getAttribute('data-src'));
+                        }
+                        self.isImgLazy = false;
+                    });
+                }
             }
         };
         if(this._opts.data.length<2){
@@ -355,6 +398,11 @@
         outer.addEventListener(self.touch.moveEvt, self.event.move);
         outer.addEventListener(self.touch.endEvt, self.event.end);
         root.addEventListener(self.touch.sizeEvt, self.event.orientation);
+        if(document.readyState == "complete"){
+            self.event.lazyLoad();
+        }else{
+            root.addEventListener('load', self.event.lazyLoad, false);
+        }
     };
     /*禁止安卓不在当前页面也自动播放*/
     Slider.prototype._setPlayWhenFocus = function () {
@@ -393,6 +441,7 @@
         root.removeEventListener('focus', self.event.focus, false);
         root.removeEventListener('blur', self.event.blur, false);
         root.removeEventListener(self.touch.sizeEvt, self.event.orientation);
+        root.addEventListener('load', self.event.lazyLoad, false);
         this.callback.onDestroy && this.callback.onDestroy();
         this.isDestroyCon && (this.wrap.innerHTML = '');
     };
