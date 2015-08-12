@@ -1,5 +1,5 @@
 /**
- * Cookie读写      1.0.0
+ * Cookie读写      1.1.0
  */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -24,11 +24,12 @@
             }
             return "";
         },
-        setCookie:function(c_name, value, expiredays) {
+        setCookie:function(c_name, value, expiredays,domain) {
             var exdate = new Date();
             exdate.setSeconds(exdate.getSeconds() + expiredays);
             document.cookie = c_name + "=" + decodeURIComponent(value) +
-            ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString())
+            ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString()) +
+            ((domain == null) ? "" : ";domain=" + domain)
         }
     };
     return Cookie;
