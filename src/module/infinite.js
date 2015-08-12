@@ -1,5 +1,5 @@
 /**
- * 无限下拉加载      1.0.7
+ * 无限下拉加载      1.1.8
  * eg:
  * <div id="page">
  *      <ul>
@@ -64,29 +64,29 @@
         this.callback = opts.callback;
     };
     Infinite.prototype._bindHandler = function () {
-        var self = this,
-            isLoging = true,
-            boxHeight = self.box.clientHeight,
-            elBody = document.getElementsByTagName('body')[0],
-            isBody = self.box === elBody;
+        var self = this;
+        self.isLoging = true;
+        self.elBody = document.getElementsByTagName('body')[0];
+        self.isBody = self.box === self.elBody;
+        self.boxHeight = self.box.clientHeight;
         self.event = {
             scroll: function (e) {
-                var contentHeight = isBody ? elBody.scrollHeight : self.con.clientHeight,
-                    scrollY = isBody ? elBody.scrollTop : Number(e.target.scrollTop);
-                if (scrollY >= contentHeight - boxHeight + self.deviation && isLoging === true) {
-                    isLoging = false;
-                    isLoging = self.callback();
+                // 对于影藏盒子初始化时 高度为零，为零时 滚动动态计算高度
+                !(self.boxHeight) && (self.boxHeight = self.box.clientHeight);
+                var contentHeight = self.isBody ? self.elBody.scrollHeight : self.con.clientHeight,
+                    scrollY = self.isBody ? self.elBody.scrollTop : Number(e.target.scrollTop);
+                if (scrollY >= contentHeight - self.boxHeight + self.deviation && self.isLoging === true) {
+                    self.isLoging = false;
+                    self.isLoging = self.callback();
                 }
             }
         };
 
-        (isBody ? document : self.box).addEventListener('scroll', self.event.scroll, false);
+        (self.isBody ? document : self.box).addEventListener('scroll', self.event.scroll, false);
     };
     Infinite.prototype.destroy = function () {
-        var self = this,
-            elBody = document.getElementsByTagName('body')[0],
-            isBody = self.box === elBody;
-        if (isBody) {
+        var self = this;
+        if (self.isBody) {
             self.box.removeEventListener('scroll', self.event.scroll, false);
         } else {
             self.box.removeEventListener('scroll', self.event.scroll, false);
