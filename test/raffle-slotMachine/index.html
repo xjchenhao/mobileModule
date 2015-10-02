@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+    <title>抽奖-老虎机</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .raffle-con {
+            margin-top: 1.406249999824219rem;
+            font-size: 0;
+            background: url("image/bg-raffle.png") no-repeat center top;
+            background-size: 32.28749999596406rem auto;
+            height: 30.82499999614687rem;
+            overflow: hidden;
+        }
+        .raffle-con ul {
+            width: 28.406249996449215rem;
+            margin: 1.124999999859375rem auto 0rem;
+        }
+        .raffle-con li {
+            display: inline-block;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            width: 8.999999998875rem;
+            height: 8.999999998875rem;
+            margin-right: 0.618749999922656rem;
+            margin-bottom: 0.618749999922656rem;
+            border-radius: 1.124999999859375rem;
+            background-repeat: no-repeat;
+            font-size: 1.237499999845312rem;
+            text-align: center;
+            color: #753d07;
+            padding-top: 6.637499999170312rem;
+            vertical-align: top;
+        }
+        .raffle-con li.on {
+            border: 5px solid #f43a0f;
+            padding-top: 6.356249999205469rem;
+        }
+        .raffle-con li:nth-child(odd) {
+            background-color: #ffe661;
+        }
+        .raffle-con li:nth-child(even) {
+            background-color: #febd19;
+        }
+        .raffle-con li:nth-child(3n) {
+            margin-right: 0;
+        }
+        .raffle-con li:nth-child(1) {
+            background-image: url("image/bonus-small.png");
+            background-position: center 2.24999999971875rem;
+            background-size: 5.568749999303906rem auto;
+        }
+        .raffle-con li:nth-child(1).on {
+            background-position: center 1.968749999753906rem;
+        }
+        .raffle-con li:nth-child(2) {
+            background-image: url("image/iphone.png");
+            background-position: center 1.124999999859375rem;
+            background-size: 3.206249999599219rem auto;
+        }
+        .raffle-con li:nth-child(2).on {
+            background-position: center 0.843749999894531rem;
+        }
+        .raffle-con li:nth-child(3) {
+            background-image: url("image/bonus-middle.png");
+            background-position: center 1.687499999789063rem;
+            background-size: 6.2999999992125rem auto;
+        }
+        .raffle-con li:nth-child(3).on {
+            background-position: center 1.406249999824219rem;
+        }
+        .raffle-con li:nth-child(4) {
+            background-image: url("image/moneybaby.png");
+            background-position: center 1.293749999838281rem;
+            background-size: 4.837499999395312rem auto;
+        }
+        .raffle-con li:nth-child(4).on {
+            background-position: center 1.012499999873437rem;
+        }
+        .raffle-con li:nth-child(5) {
+            padding-top: 0;
+            line-height: 8.999999998875rem;
+            background-color: #f43a0f;
+            font-size: 1.799999999775rem;
+            color: #fff;
+        }
+        .raffle-con li:nth-child(5) a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .raffle-con li:nth-child(6) {
+            background-image: url("image/miphone.png");
+            background-position: center 1.406249999824219rem;
+            background-size: 3.768749999528906rem auto;
+        }
+        .raffle-con li:nth-child(6).on {
+            background-position: center 1.124999999859375rem;
+        }
+        .raffle-con li:nth-child(7) {
+            background-image: url("image/bonus-big.png");
+            background-position: center 1.406249999824219rem;
+            background-size: 7.931249999008593rem auto;
+        }
+        .raffle-con li:nth-child(7).on {
+            background-position: center 1.124999999859375rem;
+        }
+        .raffle-con li:nth-child(8) {
+            background-image: url("image/bracelet.png");
+            background-position: center 1.406249999824219rem;
+            background-size: 7.368749999078906rem auto;
+        }
+        .raffle-con li:nth-child(8).on {
+            background-position: center 1.124999999859375rem;
+        }
+        .raffle-con li:nth-child(9) {
+            background-image: url("image/bonus-small2.png");
+            background-position: center 1.406249999824219rem;
+            background-size: 5.343749999332031rem auto;
+        }
+        .raffle-con li:nth-child(9).on {
+            background-position: center 1.124999999859375rem;
+        }
+    </style>
+</head>
+<body>
+<div class="raffle-con">
+    <ul id="raffleCon">
+        <li data-id="1" data-name="1元红包" class="on"><span>1</span>元红包</li>
+        <li data-id="2" data-name="iPhone6">iPhone6</li>
+        <li data-id="3" data-name="111元红包"><span>111</span>元红包</li>
+        <li data-id="4" data-name="钱小二">钱小二</li>
+        <li id="raffleStartBtn"><a href="javascript:;">点我抽奖</a></li>
+        <li data-id="5" data-name="红米手机">红米手机</li>
+        <li data-id="6" data-name="1111元红包"><span>1111</span>元红包</li>
+        <li data-id="7" data-name="小米手环">小米手环</li>
+        <li data-id="8" data-name="11元红包"><span>11</span>元红包</li>
+    </ul>
+    <input type="hidden" id="available" value="10"/>
+</div>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use(["mock","module/raffle-slotMachine.js","jquery"], function (Mock,slotMachine) {
+        var $raffleLi = $('#raffleCon li');
+        var raffle = new slotMachine({
+            awardsArr: [$raffleLi[0], $raffleLi[1], $raffleLi[2], $raffleLi[5], $raffleLi[8], $raffleLi[7], $raffleLi[6], $raffleLi[3]],
+            cycleIndex: 2
+        });
+
+        //mock数据对接请删除
+        Mock.mock('script.txt', {
+            'result|1-8': 1,
+            'surplus': 10
+        });
+
+        //点击抽奖开始转盘
+        var $available = $('#available'),   //剩余次数文本节点
+            availableNumber = parseInt($available.val()),  //剩余次数
+            isIng = false;
+
+        $('#raffleStartBtn').on('click', function () {
+            if (availableNumber > 0 && !isIng) {
+                console.log(availableNumber);
+                isIng = true;
+                $.ajax({
+                    url: 'script.txt',
+                    type: "post",
+                    data: '',
+                    dataType: "json",
+                    success: function (data) {
+                        availableNumber = data.surplus;
+                        raffle.run(data.result, function () {
+                            isIng = false;
+                            alert('恭喜您,抽中奖品'+$("#raffleCon li[data-id=" + data.result + "]").attr("data-name"));
+                        });
+                        $available.text(availableNumber);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

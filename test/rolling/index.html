@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+    <title>无缝滚动</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+            list-style: none;
+        }
+
+        #box {
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        ul {
+            font-size: 0;
+        }
+
+        li {
+            /*display: inline-block;*/
+            font-size: 24px;
+            width: 100px;
+            line-height: 100px;
+            text-align: center;
+            color: red;
+        }
+
+        li:nth-child(2n) {
+            background-color: blue;
+        }
+
+        li:nth-child(2n+1) {
+            background-color: greenyellow;;
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <ul id="rolling">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+    </ul>
+</div>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use(["module/rolling"], function (Rolling) {
+        var rolling = new Rolling({
+            parentElm: document.getElementById('rolling'),
+            direction: 'up',
+            distance: 100,
+            speed: 1000
+        });
+    });
+</script>
+</body>
+</html>

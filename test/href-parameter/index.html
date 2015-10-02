@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>href-parameter模块测试</title>
+</head>
+<body>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use(["module/href-parameter"], function (hrefParameter) {
+
+        //------------------------------------[获得当前页面的参数]
+
+        // 获得当前页面的所有参数
+        console.log(hrefParameter.get());
+
+        //------------------------------------[指定一个url,获取参数]
+
+        //获取所有参数,返回'abc=123&b=456'
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&b=456#qq').get());
+
+        //获取指定参数,返回'123'
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&b=456').get('abc'));
+
+        //获取不存在的参数,返回空字符串''
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&b=456').get('oooo'));
+
+        // 多个key中取值,返回'456'
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&b=456').get('b'));
+
+        // 获取的key是前面key的末尾字符测试,如果正则没写好,获取结果是123,正确的结果应该是456
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&c=456&cc=999').get('c'));
+
+        // 两个相同key的情况,获得第一个key的值,返回'456'
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&c=456&c=999').get('c'));
+
+        // 设置参数,返回
+        console.log(hrefParameter.create('http://www.qian360.com?abc=123&c=456&c=999').set('c','0000'));
+    });
+</script>
+</body>
+</html>

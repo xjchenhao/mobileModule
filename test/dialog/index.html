@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+    <title>弹框模块</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+        }
+
+        .ui-pop-frame {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99999;
+        }
+
+        .ui-pop-frame .ui-pop-main {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            border-radius: 0.5624999999296875rem;
+            overflow: hidden;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 29.812499996273434rem;
+            background-color: #fff;
+        }
+
+        .ui-pop-frame .ui-pop-tit {
+            margin-top: 2.5312499996835935rem;
+            font-size: 1.7999999997749998rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        .ui-pop-frame .ui-pop-tit + .ui-pop-cont {
+            font-size: 1.574999999803125rem;
+            min-height: 5.624999999296874rem;
+            padding: 1.6874999997890625rem 1.9687499997539062rem;
+            text-align: left;
+        }
+
+        .ui-pop-frame .ui-pop-cont {
+            padding: 3.9374999995078124rem 1.9687499997539062rem;
+            font-size: 1.7999999997749998rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .ui-pop-frame .ui-pop-operation {
+            border-top: 1px solid #ccc;
+            display: table;
+            width: 100%;
+            height: 100%;
+            table-layout: fixed;
+        }
+
+        .ui-pop-frame .ui-pop-operation a {
+            display: table-cell;
+            text-align: center;
+            line-height: 5.062499999367187rem;
+            font-size: 1.7999999997749998rem;
+            color: #007aff;
+        }
+
+        .ui-pop-frame .ui-pop-operation a:nth-child(n+2) {
+            border-left: 1px solid #ccc;
+        }
+
+        .ui-pop-frame .ui-pop-operation a:nth-last-child(n+2) {
+            color: #999;
+        }
+
+        .ui-pop-wait {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .ui-pop-wait .ui-pop-main {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            border-radius: 0.5624999999296875rem;
+            overflow: hidden;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            padding: 1.6874999997890625rem;
+            font-size: 1.574999999803125rem;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .ui-pop-cont-deal-password {
+            position: relative;
+        }
+
+        .ui-pop-cont-deal-password input {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .ui-pop-cont-deal-password a {
+            position: absolute;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+            right: 1.6874999997890625rem;
+        }
+
+        .ui-pop-cont-confirm-pay .tits {
+            color: #666;
+        }
+
+        .ui-pop-cont-confirm-pay .conts {
+            margin-top: 0.5624999999296875rem;
+            position: relative;
+        }
+
+        .ui-pop-cont-confirm-pay .conts input {
+            font-size: 1.574999999803125rem;
+        }
+
+        .ui-pop-cont-confirm-pay .conts .ui-input-text {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .ui-pop-cont-confirm-pay .conts .ui-btn {
+            position: absolute;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+            right: 0;
+            border: 0 none;
+            padding: 0;
+            width: 12.937499998382812rem;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<ul>
+    <li><a href="javascript:;" id="alertBtn">alert</a></li>
+    <li><a href="javascript:;" id="confirmBtn">confirm</a></li>
+    <li><a href="javascript:;" id="waitBtn">wait</a></li>
+</ul>
+<script src="../../src/sea.js"></script>
+<script>
+    seajs.use(["module/dialog", "jquery"], function (Dialog) {
+        var myAlert = new Dialog('alert');
+        var myConfirm = new Dialog('confirm');
+        var myWait = new Dialog('wait');
+
+        document.getElementById('alertBtn').onclick = function () {
+            myAlert.run('123');
+        };
+
+        document.getElementById('confirmBtn').onclick = function () {
+            myConfirm.run('123');
+        };
+
+        document.getElementById('waitBtn').onclick = function () {
+            myWait.run('123');
+        };
+
+    });
+</script>
+</body>
+</html>

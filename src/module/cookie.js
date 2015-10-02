@@ -1,5 +1,20 @@
 /**
  * Cookie读写      1.1.0
+ *
+ * eg:
+ *
+ * cookie.get(key);
+ * cookie.set(key,value,expiredays,domain);
+ *
+ * Ps:
+ *
+ *  get接口:获得当前域下指定key的cookie;
+ *
+ *  set接口:
+ *      key [string]
+ *      value[string]
+ *      expiredays[Number]  有效天数
+ *      domain[string]  域
  */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -10,8 +25,10 @@
         root.Cookie = factory(root,{});
     }
 })(this, function (root) {
-    /*读取cookie*/
+
     var Cookie={
+
+        // 读取cookie
         getCookie:function (c_name) {
             if (document.cookie.length > 1) {
                 var c_start = document.cookie.indexOf(c_name + "=");
@@ -24,6 +41,8 @@
             }
             return "";
         },
+
+        // 写入cookie
         setCookie:function(c_name, value, expiredays,domain) {
             var exdate = new Date();
             exdate.setSeconds(exdate.getSeconds() + expiredays);

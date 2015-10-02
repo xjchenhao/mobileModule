@@ -1,5 +1,21 @@
 /**
- * href参数读写      1.1.0
+ * href参数读写      1.1.2
+ *
+ * eg:
+ *
+ * //根据当前页的url获取/设置参数
+ * hrefParameter.get(key);
+ * hrefParameter.set(key,value);
+ *
+ * //指定url获取/设置参数
+ * hrefParameter.create(url).set(key);
+ * hrefParameter.create(url).get(key,value);
+ *
+ * Ps:
+ *  1. get接口:获得指定的参数,如果该key不存在返回空字符串,如果不传key,返回`&`连接的所有参数字符串
+ *  1. set接口:设置指定的参数,如果不存在则添加
+ *
+ *
  */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -18,14 +34,14 @@
 
             return {
                 get: function (key) {
-                    var patternOne = new RegExp(key + '\\=(.*?)(#|&|$)', 'ig'),
+                    var patternOne = new RegExp('[?|&]' + key + '\\=(.*?)(#|&|$)', 'ig'),
                         patternAll = new RegExp('\\?(.*?)(#|$)', 'ig');
 
-                    if(key){
+                    if (key) {
                         if (patternOne.test(href)) {
                             return RegExp.$1
                         }
-                    }else{
+                    } else {
                         if (patternAll.test(href)) {
                             return RegExp.$1
                         }
@@ -35,13 +51,12 @@
                 },
 
                 set: function (key, val) {
-                    var pattern = key + '=([^&]*)',
-                        replaceText = key + '=' + val;
+                    var pattern = '([?|&])' + key + '=[^&]*',
+                        replaceText = key + '=' + val,
+                        regResult=href.match(pattern);
 
-                    if (href.match(pattern)) {
-                        var tmp = new RegExp('(' + key + ')=([^&#]*)', 'gi');
-                        tmp = href.replace(tmp, replaceText);
-                        return tmp;
+                    if (regResult) {
+                        return href.replace(regResult[0], regResult[1] + replaceText);
                     } else {
                         var patternAll = new RegExp('(.*?)(#|$)', 'i');
                         if (href.indexOf('?') != -1) {

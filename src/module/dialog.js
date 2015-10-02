@@ -1,10 +1,10 @@
 /**
- * pop模态框      2.0.4
+ * pop模态框      2.0.6
  */
 (function (root, factory) {
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function (require) {
-            require('zepto');
+            require('jquery');
             return factory(root);
         });
     } else {
@@ -131,7 +131,7 @@
         $('#' + ID.confirmBtn + self.guid).on(touchTap, function () {
             confirmFunc && confirmFunc();
             self.close();
-        });
+        }).focus();
 
         // 取消按钮事件
         $('#' + ID.cancelBtn + self.guid).on(touchTap, function () {
@@ -148,8 +148,8 @@
     };
 
     Pop.prototype.close = Pop.prototype.destroy = function () {
-        $('#' + ID.confirmBtn).off(touchTap);
-        $('#' + ID.cancelBtn).off(touchTap);
+        $('#' + ID.confirmBtn + self.guid).off(touchTap);
+        $('#' + ID.cancelBtn + self.guid).off(touchTap);
         $('#' + ID.frame).remove();
     };
     function newGuid() {

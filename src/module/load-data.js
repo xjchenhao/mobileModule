@@ -5,7 +5,7 @@
             require('jquery');
             var Event = require('module/event');
             var Infinite = require('module/infinite');
-            var status = require('../../test/load-date/script/status');
+            var status = require('module/status');
             return factory(root, Event, Infinite, status);
         });
     } else {
